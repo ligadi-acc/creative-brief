@@ -528,6 +528,9 @@
             <div class="result-container" id="resultContainer">
                 <div class="divider"></div>
                 <textarea class="result-textarea" id="resultText" readonly></textarea>
+                <div class="btn-group" style="margin-top: 12px;">
+                    <button class="btn btn-primary" onclick="copyResult()">Скопировать ТЗ</button>
+                </div>
             </div>
         </div>
         
@@ -957,6 +960,20 @@ ${scene}`;
                 }
             });
             document.getElementById('resultContainer').classList.remove('show');
+        }
+        
+        function copyResult() {
+            const textarea = document.getElementById('resultText');
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Скопировано!';
+                btn.style.background = '#27ae60';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            });
         }
     </script>
 </body>
