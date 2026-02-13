@@ -964,8 +964,19 @@ ${scene}`;
         
         function copyResult() {
             const textarea = document.getElementById('resultText');
+            const btn = document.querySelector('#resultContainer .btn-primary');
             navigator.clipboard.writeText(textarea.value).then(() => {
-                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Скопировано!';
+                btn.style.background = '#27ae60';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '';
+                }, 2000);
+            }).catch(() => {
+                // Fallback для старых браузеров
+                textarea.select();
+                document.execCommand('copy');
                 const originalText = btn.textContent;
                 btn.textContent = '✓ Скопировано!';
                 btn.style.background = '#27ae60';
