@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Создание ТЗ на креативы</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #191919;
+            min-height: 100vh;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 60px;
+        }
+        
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .page-subtitle {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            padding-bottom: 0;
+        }
+        
+        .nav-tab {
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: -1px;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        
+        .nav-tab.active {
+            color: rgba(255, 255, 255, 0.9);
+            border-bottom-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Form */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .form-group {
+            margin-bottom: 12px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 4px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.055);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+            transition: all 0.15s ease;
+        }
+        
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .form-group input:hover,
+        .form-group select:hover,
+        .form-group textarea:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.055);
+            border-color: rgba(35, 131, 226, 0.7);
+            box-shadow: 0 0 0 2px rgba(35, 131, 226, 0.25);
+        }
+        
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        
+        .required {
+            color: #eb5757;
+        }
+        
+        .hint {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+        }
+        
+        /* Language selector */
+        .language-selector {
+            position: relative;
+        }
+        
+        .language-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #252525;
+            border-radius: 6px;
+            margin-top: 4px;
+            max-height: 280px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 0px 1px, 
+                        rgba(0, 0, 0, 0.4) 0px 3px 6px, 
+                        rgba(0, 0, 0, 0.5) 0px 9px 24px;
+        }
+        
+        .language-dropdown.show {
+            display: block;
+        }
+        
+        .lang-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: background 0.1s ease;
+        }
+        
+        .lang-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .lang-item.selected {
+            background: rgba(35, 131, 226, 0.15);
+        }
+        
+        .lang-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+        
+        .lang-name {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+        }
+        
+        /* Badge colors - Notion dark theme style */
+        .badge-purple { background: rgba(147, 114, 183, 0.5); color: #d4bfff; }
+        .badge-gray { background: rgba(145, 145, 142, 0.5); color: #b3b3b0; }
+        .badge-brown { background: rgba(168, 131, 100, 0.5); color: #d6c5b6; }
+        .badge-yellow { background: rgba(203, 169, 82, 0.5); color: #f5e6a3; }
+        .badge-orange { background: rgba(215, 129, 58, 0.5); color: #ffd09e; }
+        .badge-teal { background: rgba(68, 163, 155, 0.5); color: #a5d8d3; }
+        .badge-green { background: rgba(108, 155, 85, 0.5); color: #c2deb7; }
+        .badge-blue { background: rgba(82, 148, 207, 0.5); color: #b4d5f0; }
+        .badge-red { background: rgba(205, 93, 93, 0.5); color: #f5c0c0; }
+        .badge-pink { background: rgba(193, 105, 142, 0.5); color: #f0c6d9; }
+        .badge-indigo { background: rgba(119, 137, 197, 0.5); color: #c4cef0; }
+        .badge-cyan { background: rgba(77, 171, 191, 0.5); color: #b5e2eb; }
+        
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+        
+        .btn {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: #2383e2;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #1a73c7;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        /* Result */
+        .result-container {
+            margin-top: 16px;
+            display: none;
+        }
+        
+        .result-container.show {
+            display: block;
+        }
+        
+        .result-textarea {
+            width: 100%;
+            min-height: 320px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-family: 'SFMono-Regular', Menlo, Consolas, monospace;
+            line-height: 1.6;
+            resize: vertical;
+        }
+        
+        .result-textarea:focus {
+            outline: none;
+            border-color: rgba(35, 131, 226, 0.7);
+        }
+        
+        /* Select styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+            cursor: pointer;
+        }
+        
+        select option {
+            background: #252525;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Reference section */
+        .format-section {
+            margin-bottom: 24px;
+        }
+        
+        .format-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .format-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+        }
+        
+        .format-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .format-tag {
+            background: #2383e2;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .complexity-badge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .complexity-low { background: rgba(108, 155, 85, 0.3); color: #85d369; }
+        .complexity-medium { background: rgba(203, 169, 82, 0.3); color: #f5d76e; }
+        .complexity-high { background: rgba(205, 93, 93, 0.3); color: #f07575; }
+        
+        .format-card p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+        
+        .format-features {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 4px;
+            padding: 8px 10px;
+            font-size: 12px;
+        }
+        
+        .format-features h5 {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .format-features ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .format-features li {
+            color: rgba(255, 255, 255, 0.6);
+            padding: 2px 0;
+            padding-left: 14px;
+            position: relative;
+        }
+        
+        .format-features li::before {
+            content: '•';
+            color: rgba(255, 255, 255, 0.3);
+            position: absolute;
+            left: 0;
+        }
+        
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.08);
+            margin: 16px 0;
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 20px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">📋 Создание ТЗ на креативы</h1>
+        <p class="page-subtitle">Генератор брифов для байеров</p>
+        
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('generator')">Генератор ТЗ</button>
+            <button class="nav-tab" onclick="showTab('reference')">Справочник форматов</button>
+        </nav>
+        
+        <!-- TAB: Генератор ТЗ -->
+        <div id="generator" class="tab-content active">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Гео (страна) <span class="required">*</span></label>
+                    <div class="language-selector">
+                        <input type="text" id="geo" placeholder="Код или страна..." autocomplete="off">
+                        <div class="language-dropdown" id="geoDropdown"></div>
+                    </div>
+                    <div class="hint">FR, ES, PT, US...</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Язык <span class="required">*</span></label>
+                    <div class="language-selector">
+                        <input type="text" id="language" placeholder="Выберите язык..." autocomplete="off">
+                        <div class="language-dropdown" id="languageDropdown"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Формат креатива <span class="required">*</span></label>
+                <div class="language-selector">
+                    <input type="text" id="format" placeholder="Выберите формат..." autocomplete="off">
+                    <div class="language-dropdown" id="formatDropdown"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Контекст</label>
+                <input type="text" id="context" placeholder="Этот крео хорошо себя показал...">
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Версий 9:16</label>
+                    <input type="number" id="versions916" value="3" min="0" max="10">
+                </div>
+                <div class="form-group">
+                    <label>Версий 1:1</label>
+                    <input type="number" id="versions11" value="3" min="0" max="10">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Возраст <span class="required">*</span></label>
+                    <input type="text" id="age" placeholder="25-35">
+                </div>
+                <div class="form-group">
+                    <label>Пол <span class="required">*</span></label>
+                    <select id="gender">
+                        <option value="">Выберите...</option>
+                        <option value="мужчины">Мужчины</option>
+                        <option value="женщины">Женщины</option>
+                        <option value="все">Все</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Внешность <span class="required">*</span></label>
+                <input type="text" id="appearance" placeholder="Белые красивые мужики французы">
+            </div>
+            
+            <div class="form-group">
+                <label>Описание сцены <span class="required">*</span></label>
+                <textarea id="scene" placeholder="Поза, действия, фон, эмоции..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Оформление / Декор</label>
+                <textarea id="decor" placeholder="Субтитры, стикеры, стрелки..."></textarea>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="generateBrief()">Сгенерировать ТЗ</button>
+                <button class="btn btn-secondary" onclick="clearForm()">Очистить</button>
+            </div>
+            
+            <div class="result-container" id="resultContainer">
+                <div class="divider"></div>
+                <textarea class="result-textarea" id="resultText" readonly></textarea>
+            </div>
+        </div>
+        
+        <!-- TAB: Справочник форматов -->
+        <div id="reference" class="tab-content">
+            <div class="format-section">
+                <h3>1. UGC (User Generated Content)</h3>
+                
+                <div class="format-card">
+                    <h4><span class="format-tag">Sora UGC</span> <span class="complexity-badge complexity-medium">Средняя</span></h4>
+                    <p>Полностью AI-сгенерированный персонаж. Без оформления, субтитров, графики.</p>
+                    <div class="format-features">
+                        <h5>Особенности:</h5>
+                        <ul>
+                            <li>Повторение персонажа 1 к 1 невозможно</li>
+                            <li>10-15 сек — максимальное качество</li>
+                            <li>15-25 сек — качество "мыльнее"</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="format-card">
+                    <h4><span class="format-tag">Sora UGC HD</span> <span class="complexity-badge complexity-medium">Средняя</span></h4>
+                    <p>То же, но в более высоком качестве для премиальных офферов.</p>
+                </div>
+                
+                <div class="format-card">
+                    <h4><span class="format-tag">HeyGen UGC Single-Pose</span> <span class="complexity-badge complexity-low">Низкая</span></h4>
+                    <p>UGC через HeyGen в одной позе. Аватар фиксирован.</p>
+                    <div class="format-features">
+                        <h5>Особенности:</h5>
+                        <ul>
+                            <li>Можно генерировать из изображения</li>
+                            <li>Перенос персонажа возможен</li>
+                            <li>Более роботизированный</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="format-card">
+                    <h4><span class="format-tag">HeyGen UGC Multi-Pose</span> <span class="complexity-badge complexity-medium">Средняя</span></h4>
+                    <p>UGC в нескольких позах (1-4 ракурса). Требует оформления.</p>
+                </div>
+            </div>
+            
+            <div class="format-section">
+                <h3>2. UGC + оформление</h3>
+                <div class="format-card">
+                    <h4><span class="format-tag">UGC+оформление</span> <span class="complexity-badge complexity-medium">Средняя</span></h4>
+                    <p>UGC с субтитрами, стикерами, стрелками. Без оформления HeyGen выглядит безжизненно.</p>
+                </div>
+            </div>
+            
+            <div class="format-section">
+                <h3>3. Mix (UGC + футаж)</h3>
+                <div class="format-card">
+                    <h4><span class="format-tag">Sora Mix</span> <span class="complexity-badge complexity-high">Высокая</span></h4>
+                    <p>UGC → хук/вступление → футажи → UGC → CTA</p>
+                </div>
+                <div class="format-card">
+                    <h4><span class="format-tag">HeyGen Mix</span> <span class="complexity-badge complexity-high">Высокая</span></h4>
+                    <p>То же, но персонаж через HeyGen.</p>
+                </div>
+            </div>
+            
+            <div class="format-section">
+                <h3>4. Cutout UGC + footage</h3>
+                <div class="format-card">
+                    <h4><span class="format-tag">Cutout UGC</span> <span class="complexity-badge complexity-high">Высокая</span></h4>
+                    <p>Персонаж вырезается и помещается в угол экрана. Основное пространство — футажи.</p>
+                </div>
+                <div class="format-card">
+                    <h4><span class="format-tag">UGC-Depth FX</span> <span class="complexity-badge complexity-high">Высокая</span></h4>
+                    <p>Многослойное видео: персонаж → полупрозрачный футаж → исходный фон.</p>
+                </div>
+            </div>
+            
+            <div class="format-section">
+                <h3>5. Split Screen</h3>
+                <div class="format-card">
+                    <h4><span class="format-tag">UGC split screen</span> <span class="complexity-badge complexity-medium">Средняя</span></h4>
+                    <p>Экран делится: UGC сверху/слева + offer video или залипательное видео.</p>
+                </div>
+            </div>
+            
+            <div class="format-section">
+                <h3>6. Footage / Static</h3>
+                <div class="format-card">
+                    <h4><span class="format-tag">Footage</span> <span class="complexity-badge complexity-low">Низкая</span></h4>
+                    <p>Только футажи, без UGC-персонажа.</p>
+                </div>
+                <div class="format-card">
+                    <h4><span class="format-tag">Static Simple</span> <span class="complexity-badge complexity-low">Низкая</span></h4>
+                    <p>Статичная картинка.</p>
+                </div>
+                <div class="format-card">
+                    <h4><span class="format-tag">Static-Pulse FX</span> <span class="complexity-badge complexity-medium">Средняя</span></h4>
+                    <p>Статичная с эффектами движения.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const badgeColors = [
+            'badge-purple', 'badge-gray', 'badge-brown', 'badge-yellow', 
+            'badge-orange', 'badge-teal', 'badge-green', 'badge-blue', 
+            'badge-red', 'badge-pink', 'badge-indigo', 'badge-cyan'
+        ];
+        
+        function getColorForCode(code) {
+            let hash = 0;
+            for (let i = 0; i < code.length; i++) {
+                hash = code.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return badgeColors[Math.abs(hash) % badgeColors.length];
+        }
+        
+        const countries = [
+            { code: 'AD', name: 'Андорра', nameEn: 'Andorra' },
+            { code: 'AE', name: 'ОАЭ', nameEn: 'UAE' },
+            { code: 'AL', name: 'Албания', nameEn: 'Albania' },
+            { code: 'AR', name: 'Аргентина', nameEn: 'Argentina' },
+            { code: 'AT', name: 'Австрия', nameEn: 'Austria' },
+            { code: 'AU', name: 'Австралия', nameEn: 'Australia' },
+            { code: 'AZ', name: 'Азербайджан', nameEn: 'Azerbaijan' },
+            { code: 'BA', name: 'Босния', nameEn: 'Bosnia' },
+            { code: 'BE', name: 'Бельгия', nameEn: 'Belgium' },
+            { code: 'BG', name: 'Болгария', nameEn: 'Bulgaria' },
+            { code: 'BR', name: 'Бразилия', nameEn: 'Brazil' },
+            { code: 'BY', name: 'Беларусь', nameEn: 'Belarus' },
+            { code: 'CA', name: 'Канада', nameEn: 'Canada' },
+            { code: 'CH', name: 'Швейцария', nameEn: 'Switzerland' },
+            { code: 'CL', name: 'Чили', nameEn: 'Chile' },
+            { code: 'CN', name: 'Китай', nameEn: 'China' },
+            { code: 'CO', name: 'Колумбия', nameEn: 'Colombia' },
+            { code: 'CZ', name: 'Чехия', nameEn: 'Czech Republic' },
+            { code: 'DE', name: 'Германия', nameEn: 'Germany' },
+            { code: 'DK', name: 'Дания', nameEn: 'Denmark' },
+            { code: 'EE', name: 'Эстония', nameEn: 'Estonia' },
+            { code: 'EG', name: 'Египет', nameEn: 'Egypt' },
+            { code: 'ES', name: 'Испания', nameEn: 'Spain' },
+            { code: 'FI', name: 'Финляндия', nameEn: 'Finland' },
+            { code: 'FR', name: 'Франция', nameEn: 'France' },
+            { code: 'GB', name: 'Великобритания', nameEn: 'United Kingdom' },
+            { code: 'GR', name: 'Греция', nameEn: 'Greece' },
+            { code: 'HR', name: 'Хорватия', nameEn: 'Croatia' },
+            { code: 'HU', name: 'Венгрия', nameEn: 'Hungary' },
+            { code: 'ID', name: 'Индонезия', nameEn: 'Indonesia' },
+            { code: 'IE', name: 'Ирландия', nameEn: 'Ireland' },
+            { code: 'IL', name: 'Израиль', nameEn: 'Israel' },
+            { code: 'IN', name: 'Индия', nameEn: 'India' },
+            { code: 'IT', name: 'Италия', nameEn: 'Italy' },
+            { code: 'JP', name: 'Япония', nameEn: 'Japan' },
+            { code: 'KR', name: 'Южная Корея', nameEn: 'South Korea' },
+            { code: 'KZ', name: 'Казахстан', nameEn: 'Kazakhstan' },
+            { code: 'LT', name: 'Литва', nameEn: 'Lithuania' },
+            { code: 'LV', name: 'Латвия', nameEn: 'Latvia' },
+            { code: 'MA', name: 'Марокко', nameEn: 'Morocco' },
+            { code: 'MX', name: 'Мексика', nameEn: 'Mexico' },
+            { code: 'MY', name: 'Малайзия', nameEn: 'Malaysia' },
+            { code: 'NL', name: 'Нидерланды', nameEn: 'Netherlands' },
+            { code: 'NO', name: 'Норвегия', nameEn: 'Norway' },
+            { code: 'NZ', name: 'Новая Зеландия', nameEn: 'New Zealand' },
+            { code: 'PE', name: 'Перу', nameEn: 'Peru' },
+            { code: 'PH', name: 'Филиппины', nameEn: 'Philippines' },
+            { code: 'PK', name: 'Пакистан', nameEn: 'Pakistan' },
+            { code: 'PL', name: 'Польша', nameEn: 'Poland' },
+            { code: 'PT', name: 'Португалия', nameEn: 'Portugal' },
+            { code: 'RO', name: 'Румыния', nameEn: 'Romania' },
+            { code: 'RS', name: 'Сербия', nameEn: 'Serbia' },
+            { code: 'RU', name: 'Россия', nameEn: 'Russia' },
+            { code: 'SA', name: 'Саудовская Аравия', nameEn: 'Saudi Arabia' },
+            { code: 'SE', name: 'Швеция', nameEn: 'Sweden' },
+            { code: 'SG', name: 'Сингапур', nameEn: 'Singapore' },
+            { code: 'SK', name: 'Словакия', nameEn: 'Slovakia' },
+            { code: 'TH', name: 'Таиланд', nameEn: 'Thailand' },
+            { code: 'TR', name: 'Турция', nameEn: 'Turkey' },
+            { code: 'UA', name: 'Украина', nameEn: 'Ukraine' },
+            { code: 'US', name: 'США', nameEn: 'United States' },
+            { code: 'VN', name: 'Вьетнам', nameEn: 'Vietnam' },
+            { code: 'ZA', name: 'ЮАР', nameEn: 'South Africa' },
+        ];
+        
+        const languages = [
+            { code: 'af', name: 'Африкаанс', nameEn: 'Afrikaans' },
+            { code: 'sq', name: 'Албанский', nameEn: 'Albanian' },
+            { code: 'am', name: 'Амхарский', nameEn: 'Amharic' },
+            { code: 'en', name: 'Английский', nameEn: 'English' },
+            { code: 'ar', name: 'Арабский', nameEn: 'Arabic' },
+            { code: 'hy', name: 'Армянский', nameEn: 'Armenian' },
+            { code: 'az', name: 'Азербайджанский', nameEn: 'Azerbaijani' },
+            { code: 'eu', name: 'Баскский', nameEn: 'Basque' },
+            { code: 'be', name: 'Белорусский', nameEn: 'Belarusian' },
+            { code: 'bn', name: 'Бенгальский', nameEn: 'Bengali' },
+            { code: 'bs', name: 'Боснийский', nameEn: 'Bosnian' },
+            { code: 'bg', name: 'Болгарский', nameEn: 'Bulgarian' },
+            { code: 'my', name: 'Бирманский', nameEn: 'Burmese' },
+            { code: 'cy', name: 'Валлийский', nameEn: 'Welsh' },
+            { code: 'hu', name: 'Венгерский', nameEn: 'Hungarian' },
+            { code: 'vi', name: 'Вьетнамский', nameEn: 'Vietnamese' },
+            { code: 'haw', name: 'Гавайский', nameEn: 'Hawaiian' },
+            { code: 'gl', name: 'Галисийский', nameEn: 'Galician' },
+            { code: 'el', name: 'Греческий', nameEn: 'Greek' },
+            { code: 'ka', name: 'Грузинский', nameEn: 'Georgian' },
+            { code: 'da', name: 'Датский', nameEn: 'Danish' },
+            { code: 'he', name: 'Иврит', nameEn: 'Hebrew' },
+            { code: 'yi', name: 'Идиш', nameEn: 'Yiddish' },
+            { code: 'id', name: 'Индонезийский', nameEn: 'Indonesian' },
+            { code: 'ga', name: 'Ирландский', nameEn: 'Irish' },
+            { code: 'is', name: 'Исландский', nameEn: 'Icelandic' },
+            { code: 'es', name: 'Испанский', nameEn: 'Spanish' },
+            { code: 'it', name: 'Итальянский', nameEn: 'Italian' },
+            { code: 'kk', name: 'Казахский', nameEn: 'Kazakh' },
+            { code: 'ca', name: 'Каталонский', nameEn: 'Catalan' },
+            { code: 'zh', name: 'Китайский', nameEn: 'Chinese' },
+            { code: 'ko', name: 'Корейский', nameEn: 'Korean' },
+            { code: 'ku', name: 'Курдский', nameEn: 'Kurdish' },
+            { code: 'ky', name: 'Кыргызский', nameEn: 'Kyrgyz' },
+            { code: 'lo', name: 'Лаосский', nameEn: 'Lao' },
+            { code: 'lv', name: 'Латышский', nameEn: 'Latvian' },
+            { code: 'lt', name: 'Литовский', nameEn: 'Lithuanian' },
+            { code: 'mk', name: 'Македонский', nameEn: 'Macedonian' },
+            { code: 'ms', name: 'Малайский', nameEn: 'Malay' },
+            { code: 'mt', name: 'Мальтийский', nameEn: 'Maltese' },
+            { code: 'mn', name: 'Монгольский', nameEn: 'Mongolian' },
+            { code: 'de', name: 'Немецкий', nameEn: 'German' },
+            { code: 'ne', name: 'Непальский', nameEn: 'Nepali' },
+            { code: 'nl', name: 'Нидерландский', nameEn: 'Dutch' },
+            { code: 'no', name: 'Норвежский', nameEn: 'Norwegian' },
+            { code: 'fa', name: 'Персидский', nameEn: 'Persian' },
+            { code: 'pl', name: 'Польский', nameEn: 'Polish' },
+            { code: 'pt', name: 'Португальский', nameEn: 'Portuguese' },
+            { code: 'ps', name: 'Пушту', nameEn: 'Pashto' },
+            { code: 'ro', name: 'Румынский', nameEn: 'Romanian' },
+            { code: 'ru', name: 'Русский', nameEn: 'Russian' },
+            { code: 'sr', name: 'Сербский', nameEn: 'Serbian' },
+            { code: 'si', name: 'Сингальский', nameEn: 'Sinhala' },
+            { code: 'sk', name: 'Словацкий', nameEn: 'Slovak' },
+            { code: 'sl', name: 'Словенский', nameEn: 'Slovenian' },
+            { code: 'so', name: 'Сомали', nameEn: 'Somali' },
+            { code: 'sw', name: 'Суахили', nameEn: 'Swahili' },
+            { code: 'tl', name: 'Тагальский', nameEn: 'Tagalog' },
+            { code: 'th', name: 'Тайский', nameEn: 'Thai' },
+            { code: 'ta', name: 'Тамильский', nameEn: 'Tamil' },
+            { code: 'te', name: 'Телугу', nameEn: 'Telugu' },
+            { code: 'tr', name: 'Турецкий', nameEn: 'Turkish' },
+            { code: 'uk', name: 'Украинский', nameEn: 'Ukrainian' },
+            { code: 'ur', name: 'Урду', nameEn: 'Urdu' },
+            { code: 'uz', name: 'Узбекский', nameEn: 'Uzbek' },
+            { code: 'fi', name: 'Финский', nameEn: 'Finnish' },
+            { code: 'fr', name: 'Французский', nameEn: 'French' },
+            { code: 'hi', name: 'Хинди', nameEn: 'Hindi' },
+            { code: 'hr', name: 'Хорватский', nameEn: 'Croatian' },
+            { code: 'cs', name: 'Чешский', nameEn: 'Czech' },
+            { code: 'sv', name: 'Шведский', nameEn: 'Swedish' },
+            { code: 'et', name: 'Эстонский', nameEn: 'Estonian' },
+            { code: 'ja', name: 'Японский', nameEn: 'Japanese' },
+        ];
+        
+        const formats = [
+            { code: 'Sora', name: 'Sora UGC', desc: 'AI-персонаж без оформления' },
+            { code: 'Sora HD', name: 'Sora UGC HD', desc: 'AI высокого качества' },
+            { code: 'HeyGen 1', name: 'HeyGen Single-Pose', desc: 'одна поза' },
+            { code: 'HeyGen M', name: 'HeyGen Multi-Pose', desc: 'несколько поз' },
+            { code: 'UGC+', name: 'UGC+оформление', desc: 'субтитры и стикеры' },
+            { code: 'Sora Mix', name: 'Sora Mix', desc: 'UGC + футажи' },
+            { code: 'HG Mix', name: 'HeyGen Mix', desc: 'UGC + футажи' },
+            { code: 'Cutout', name: 'Cutout UGC', desc: 'персонаж в углу' },
+            { code: 'Depth', name: 'UGC-Depth FX', desc: 'многослойный' },
+            { code: 'Depth M', name: 'Depth FX Multipose', desc: 'многослойный + позы' },
+            { code: 'Split O', name: 'Split screen offer', desc: 'offer video' },
+            { code: 'Split Z', name: 'Split screen zalip', desc: 'залипательное видео' },
+            { code: 'Footage', name: 'Footage', desc: 'только футажи' },
+            { code: 'AE', name: 'After Effects Mockup', desc: 'сложный ролик' },
+            { code: 'Static', name: 'Static Simple', desc: 'статичная картинка' },
+            { code: 'Pulse', name: 'Static-Pulse FX', desc: 'статика с эффектами' },
+        ];
+        
+        function setupAutocomplete(inputId, dropdownId, data, valueKey) {
+            const input = document.getElementById(inputId);
+            const dropdown = document.getElementById(dropdownId);
+            let selectedIndex = -1;
+            let filteredItems = [];
+            
+            input.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                selectedIndex = -1;
+                
+                if (query.length === 0) {
+                    dropdown.classList.remove('show');
+                    return;
+                }
+                
+                filteredItems = data.filter(item => {
+                    const searchStr = `${item.code} ${item.name} ${item.nameEn || ''} ${item.desc || ''}`.toLowerCase();
+                    return searchStr.includes(query);
+                }).slice(0, 12);
+                
+                if (filteredItems.length === 0) {
+                    dropdown.classList.remove('show');
+                    return;
+                }
+                
+                dropdown.innerHTML = filteredItems.map((item, index) => {
+                    const colorClass = getColorForCode(item.code);
+                    const secondary = item.desc || item.nameEn || '';
+                    const secondaryHtml = secondary ? ` <span style="opacity:0.5">— ${secondary}</span>` : '';
+                    return `<div class="lang-item" data-index="${index}" data-value="${item[valueKey]}">
+                        <span class="lang-badge ${colorClass}">${item.code.toLowerCase()}</span>
+                        <span class="lang-name">${item.name}${secondaryHtml}</span>
+                    </div>`;
+                }).join('');
+                
+                dropdown.classList.add('show');
+            });
+            
+            input.addEventListener('focus', function() {
+                if (this.value.length > 0) {
+                    this.dispatchEvent(new Event('input'));
+                }
+            });
+            
+            input.addEventListener('keydown', function(e) {
+                if (!dropdown.classList.contains('show')) return;
+                const items = dropdown.querySelectorAll('.lang-item');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+                    updateSelection(items);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedIndex = Math.max(selectedIndex - 1, 0);
+                    updateSelection(items);
+                } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                    e.preventDefault();
+                    selectItem(filteredItems[selectedIndex]);
+                } else if (e.key === 'Escape') {
+                    dropdown.classList.remove('show');
+                }
+            });
+            
+            dropdown.addEventListener('click', function(e) {
+                const item = e.target.closest('.lang-item');
+                if (item) {
+                    const index = parseInt(item.dataset.index);
+                    selectItem(filteredItems[index]);
+                }
+            });
+            
+            function updateSelection(items) {
+                items.forEach((item, i) => {
+                    item.classList.toggle('selected', i === selectedIndex);
+                });
+            }
+            
+            function selectItem(item) {
+                input.value = item[valueKey];
+                dropdown.classList.remove('show');
+            }
+            
+            document.addEventListener('click', function(e) {
+                if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+        }
+        
+        setupAutocomplete('geo', 'geoDropdown', countries, 'code');
+        setupAutocomplete('language', 'languageDropdown', languages, 'code');
+        setupAutocomplete('format', 'formatDropdown', formats, 'name');
+        
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function generateBrief() {
+            const geo = document.getElementById('geo').value;
+            const language = document.getElementById('language').value;
+            const format = document.getElementById('format').value;
+            const context = document.getElementById('context').value;
+            const versions916 = document.getElementById('versions916').value;
+            const versions11 = document.getElementById('versions11').value;
+            const age = document.getElementById('age').value;
+            const gender = document.getElementById('gender').value;
+            const appearance = document.getElementById('appearance').value;
+            const scene = document.getElementById('scene').value;
+            const decor = document.getElementById('decor').value;
+            
+            if (!geo || !language || !format || !age || !gender || !appearance || !scene) {
+                alert('Заполните обязательные поля (*)');
+                return;
+            }
+            
+            const total = (parseInt(versions916) || 0) + (parseInt(versions11) || 0);
+            
+            let text = `1. Гео: ${geo}, язык: ${language}
+2. Формат: ${format}`;
+            
+            if (context) text += `\n${context}`;
+            
+            text += `\n\nМне нужны ${versions916} версии 9:16 (Reels/TikTok) и ${versions11} версии 1:1 (Feed). 
+
+Сделать в тотале ${total} вариантов
+Возраст: ${age}
+Пол: ${gender}
+Раса: ${appearance}
+
+${scene}`;
+            
+            if (decor) text += `\n\n${decor}`;
+            
+            document.getElementById('resultText').value = text;
+            document.getElementById('resultContainer').classList.add('show');
+            document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function clearForm() {
+            document.querySelectorAll('#generator input, #generator select, #generator textarea').forEach(el => {
+                if (el.type === 'number') {
+                    el.value = el.id === 'versions916' || el.id === 'versions11' ? '3' : '';
+                } else if (el.id !== 'resultText') {
+                    el.value = '';
+                }
+            });
+            document.getElementById('resultContainer').classList.remove('show');
+        }
+    </script>
+</body>
+</html>
