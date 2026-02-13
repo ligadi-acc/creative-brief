@@ -450,10 +450,25 @@
             
             <div class="form-group">
                 <label>Формат креатива <span class="required">*</span></label>
-                <div class="language-selector">
-                    <input type="text" id="format" placeholder="Выберите формат..." autocomplete="off">
-                    <div class="language-dropdown" id="formatDropdown"></div>
-                </div>
+                <select id="format">
+                    <option value="">Выберите формат...</option>
+                    <option value="Sora UGC">🎬 Sora UGC — AI-персонаж без оформления</option>
+                    <option value="Sora UGC HD">🎬 Sora UGC HD — AI высокого качества</option>
+                    <option value="HeyGen Single-Pose">🤖 HeyGen Single-Pose — одна поза</option>
+                    <option value="HeyGen Multi-Pose">🤖 HeyGen Multi-Pose — несколько поз</option>
+                    <option value="UGC+оформление">✨ UGC+оформление — субтитры и стикеры</option>
+                    <option value="Sora Mix">🎞️ Sora Mix — UGC + футажи</option>
+                    <option value="HeyGen Mix">🎞️ HeyGen Mix — UGC + футажи</option>
+                    <option value="Cutout UGC">✂️ Cutout UGC — персонаж в углу</option>
+                    <option value="UGC-Depth FX">🎭 UGC-Depth FX — многослойный</option>
+                    <option value="Depth FX Multipose">🎭 Depth FX Multipose — многослойный + позы</option>
+                    <option value="Split screen offer">📱 Split screen offer — offer video</option>
+                    <option value="Split screen zalip">📱 Split screen zalip — залипательное видео</option>
+                    <option value="Footage">🎥 Footage — только футажи</option>
+                    <option value="After Effects Mockup">💻 After Effects Mockup — сложный ролик</option>
+                    <option value="Static Simple">🖼️ Static Simple — статичная картинка</option>
+                    <option value="Static-Pulse FX">🖼️ Static-Pulse FX — статика с эффектами</option>
+                </select>
             </div>
             
             <div class="form-group">
@@ -485,7 +500,7 @@
                         <option value="">Выберите...</option>
                         <option value="мужчины">Мужчины</option>
                         <option value="женщины">Женщины</option>
-                        <option value="все">Все</option>
+                        <option value="рандом">Рандом</option>
                     </select>
                 </div>
             </div>
@@ -884,7 +899,6 @@
         
         setupAutocomplete('geo', 'geoDropdown', countries, 'code');
         setupAutocomplete('language', 'languageDropdown', languages, 'code');
-        setupAutocomplete('format', 'formatDropdown', formats, 'name');
         
         function showTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
