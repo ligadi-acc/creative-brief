@@ -397,7 +397,7 @@
                     <option value="">Выберите...</option>
                     <option value="мужчины">Мужчины</option>
                     <option value="женщины">Женщины</option>
-                    <option value="рандом">Рандом</option>
+                    <option value="мужчины и женщины">Мужчины и женщины</option>
                 </select>
             </div>
         </div>
@@ -408,7 +408,7 @@
         </div>
 
         <div class="form-group">
-            <label class="person-field-label">Описание сцены <span class="required">*</span></label>
+            <label class="person-field-label">Описание сцены</label>
             <textarea id="scene" placeholder="Поза, действия, фон, эмоции..."></textarea>
         </div>
 
@@ -757,7 +757,7 @@ function onRepeatChange() {
     const fieldsBlock = document.getElementById('personFields');
     if (fieldsBlock) {
         fieldsBlock.style.display = checked ? 'none' : '';
-        ['age','gender','appearance','scene'].forEach(id => {
+        ['age','gender','appearance'].forEach(id => {
             const el = document.getElementById(id);
             if (el) el.required = !checked;
         });
@@ -903,7 +903,7 @@ function generateBrief() {
 
     // Validate person fields only if not repeat
     if (!repeatChar) {
-        if (!age || !gender || !appearance || !scene) {
+        if (!age || !gender || !appearance) {
             showError('Заполните обязательные поля (*)'); return;
         }
     }
@@ -1069,7 +1069,7 @@ function clearForm() {
     document.getElementById('changeOptions').classList.remove('show');
     const pf = document.getElementById('personFields');
     if (pf) pf.style.display = '';
-    ['age','gender','appearance','scene'].forEach(id => {
+    ['age','gender','appearance'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.required = true;
     });
