@@ -458,6 +458,7 @@
         <div id="scenariosContainer"></div>
 
         <!-- ─── Кнопки ─────────────────────────────────────────── -->
+        <div id="formError" style="display:none; margin-bottom:8px; padding:8px 12px; background:rgba(235,87,87,0.12); border:1px solid rgba(235,87,87,0.4); border-radius:4px; color:#f08080; font-size:13px;"></div>
         <div class="btn-group">
             <button class="btn btn-primary" onclick="generateBrief()">Сгенерировать ТЗ</button>
             <button class="btn btn-secondary" onclick="clearForm()">Очистить</button>
@@ -765,6 +766,19 @@ function checkCharCount(textarea, counterId) {
 }
 
 // ─── Generate ─────────────────────────────────────────────────────────────────
+function showError(msg) {
+    const el = document.getElementById('formError');
+    if (!el) return;
+    el.textContent = '⚠ ' + msg;
+    el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideError() {
+    const el = document.getElementById('formError');
+    if (el) el.style.display = 'none';
+}
+
 function onUgcCleanChange() {
     const clean = document.getElementById('ugcClean').checked;
     document.getElementById('ugcTextOptions').style.display = clean ? 'none' : '';
@@ -796,6 +810,7 @@ function onUgcTextType() {
 }
 
 function generateBrief() {
+    hideError();
     const language   = document.getElementById('language').value.trim();
     const format     = document.getElementById('format').value;
     const context    = document.getElementById('context').value.trim();
@@ -816,16 +831,14 @@ function generateBrief() {
         const changeType = document.querySelector('input[name="changeType"]:checked');
         if (changeType === null && !repeatChar) {
             // neither checkbox nor radio selected
-            alert('Укажите вариант персонажа (галочка или что меняем)');
-            return;
+            showError('Укажите вариант персонажа (галочка или что меняем)'); return;
         }
     }
 
     // Validate person fields only if not repeat
     if (!repeatChar) {
         if (!age || !gender || !appearance || !scene) {
-            alert('Заполните обязательные поля (*)');
-            return;
+            showError('Заполните обязательные поля (*)'); return;
         }
     }
 
@@ -835,19 +848,16 @@ function generateBrief() {
         const footage = document.getElementById('footage_content').value.trim();
         const txtType = document.getElementById('footage_text_type').value;
         if (!theme || !footage || !txtType) {
-            alert('Заполните все обязательные поля для Footage');
-            return;
+            showError('Заполните все обязательные поля для Footage'); return;
         }
         const needsCap = txtType === 'caption_only' || txtType === 'subtitles_caption';
         if (needsCap && !document.getElementById('footage_caption').value.trim()) {
-            alert('Укажите надпись на видео');
-            return;
+            showError('Укажите надпись на видео'); return;
         }
     }
 
     if (!language || !format) {
-        alert('Заполните обязательные поля (*)');
-        return;
+        showError('Заполните обязательные поля (*)'); return;
     }
 
     let changeNote = '';
@@ -857,16 +867,16 @@ function generateBrief() {
             changeNote = 'полностью повторяем персонажа';
         } else {
             const changeType = document.querySelector('input[name="changeType"]:checked');
-            if (!changeType) { alert('Укажите что меняем у персонажа'); return; }
+            if (!changeType) { showError('Укажите что меняем у персонажа'); return; }
             changeNote = changeType.value;
         }
         const ugcClean = document.getElementById('ugcClean').checked;
         if (!ugcClean) {
             const ugcTxtType = document.getElementById('ugc_text_type').value;
-            if (!ugcTxtType) { alert('Укажите вариант текста на видео'); return; }
+            if (!ugcTxtType) { showError('Укажите вариант текста на видео'); return; }
             const ugcCap = document.getElementById('ugc_caption').value.trim();
             const needsCap = ugcTxtType === 'caption_only' || ugcTxtType === 'subtitles_caption';
-            if (needsCap && !ugcCap) { alert('Укажите надпись на видео'); return; }
+            if (needsCap && !ugcCap) { showError('Укажите надпись на видео'); return; }
             const txtTypeMap = {
                 'scenario':          'Повторяем сценарий',
                 'caption_only':      'Только надпись (без титров)',
@@ -885,7 +895,7 @@ function generateBrief() {
     for (let i = 1; i <= scenarioCount; i++) {
         const trEl = document.getElementById(`scenario_tr_${i}`);
         if (!isRuLang && trEl && trEl.value.length > MAX_CHARS) {
-            alert(`Сценарий ${i}: перевод превышает ${MAX_CHARS} символов. Сократите текст.`);
+            showError(`Сценарий ${i}: перевод превышает ${MAX_CHARS} символов. Сократите текст.`);
             trEl.focus();
             return;
         }
@@ -893,8 +903,7 @@ function generateBrief() {
 
     const total = (parseInt(v916)||0) + (parseInt(v11)||0);
     if (total === 0) {
-        alert('Укажите количество версий (9:16 и/или 1:1)');
-        return;
+        showError('Укажите количество версий (9:16 и/или 1:1)'); return;
     }
 
     let text = `1. Язык: ${language}\n2. Формат: ${format}`;
@@ -951,6 +960,7 @@ ${personBlock}`;
 
 // ─── Clear ────────────────────────────────────────────────────────────────────
 function clearForm() {
+    hideError();
     document.querySelectorAll('#generator input:not([type="radio"]):not([type="checkbox"]), #generator select, #generator textarea:not(#resultText)').forEach(el => {
         if (el.type === 'number') el.value = '0';
         else el.value = '';
