@@ -281,7 +281,7 @@
 <body>
 <div class="container">
     <h1 class="page-title">📋 Создание ТЗ на креативы</h1>
-    <p class="page-subtitle">Генератор брифов</p>
+    <p class="page-subtitle">Генератор брифов для байеров</p>
 
     <nav class="nav-tabs">
         <button class="nav-tab active" onclick="showTab('generator', this)">Генератор ТЗ</button>
@@ -313,7 +313,7 @@
 
         <div class="form-group" style="margin-top:12px">
             <label>Контекст</label>
-            <input type="text" id="context" placeholder="Этот крео хорошо себя показал...">
+            <input type="text" id="context" placeholder="Этот крео хорошо себя показал, мысли, идеи, комментарии, уточнения...">
         </div>
 
         <div class="divider"></div>
@@ -332,8 +332,8 @@
         <!-- ─── UGC опции персонажа ───────────────────────────── -->
         <div class="ugc-options" id="ugcOptions">
             <label class="checkbox-row">
-                <input type="checkbox" id="repeatCharacter" onchange="onRepeatChange()">
-                <span>Полностью повторяем персонажа <span style="color:#eb5757">*</span></span>
+                <input type="checkbox" id="repeatCharacter" onchange="onRepeatChange()" checked>
+                <span>Полностью повторяем персонажа и локацию <span style="color:#eb5757">*</span></span>
             </label>
 
             <div class="change-options" id="changeOptions">
@@ -353,6 +353,29 @@
                 <div class="change-option-item">
                     <input type="radio" name="changeType" id="c3" value="меняем локацию/фон персонажа">
                     <label for="c3">Меняем локацию/фон персонажа</label>
+                </div>
+            </div>
+
+            <!-- Чистое UGC / оформление — всегда видно когда ugcOptions показан -->
+            <div id="ugcCleanRow" style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.07);">
+                <label class="checkbox-row">
+                    <input type="checkbox" id="ugcClean" onchange="onUgcCleanChange()" checked>
+                    <span id="ugcCleanLabel">Чистое UGC без оформления</span>
+                </label>
+                <div id="ugcTextOptions" style="display:none; margin-top:10px">
+                    <div class="change-options-label">Текст на видео:</div>
+                    <div class="form-group" style="margin-top:6px; margin-bottom:6px">
+                        <select id="ugc_text_type" onchange="onUgcTextType()">
+                            <option value="">Выберите вариант...</option>
+                            <option value="scenario">Повторяем сценарий</option>
+                            <option value="caption_only">Только надпись (без титров)</option>
+                            <option value="subtitles_caption">Титры из сценария + надпись на видео</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="ugcCaptionField" style="display:none; margin-bottom:0">
+                        <label>Надпись на видео <span class="required">*</span></label>
+                        <input type="text" id="ugc_caption" placeholder="Текст надписи...">
+                    </div>
                 </div>
             </div>
         </div>
@@ -384,28 +407,6 @@
             <textarea id="scene" placeholder="Поза, действия, фон, эмоции..."></textarea>
         </div>
 
-            <!-- Чистое UGC / оформление -->
-            <div id="ugcCleanRow" style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.07); display:none">
-                <label class="checkbox-row">
-                    <input type="checkbox" id="ugcClean" onchange="onUgcCleanChange()" checked>
-                    <span id="ugcCleanLabel">Чистое UGC без оформления</span>
-                </label>
-                <div id="ugcTextOptions" style="display:none; margin-top:10px">
-                    <div class="change-options-label">Текст на видео:</div>
-                    <div class="form-group" style="margin-top:6px; margin-bottom:6px">
-                        <select id="ugc_text_type" onchange="onUgcTextType()">
-                            <option value="">Выберите вариант...</option>
-                            <option value="scenario">Повторяем сценарий</option>
-                            <option value="caption_only">Только надпись (без титров)</option>
-                            <option value="subtitles_caption">Титры из сценария + надпись на видео</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="ugcCaptionField" style="display:none; margin-bottom:0">
-                        <label>Надпись на видео <span class="required">*</span></label>
-                        <input type="text" id="ugc_caption" placeholder="Текст надписи...">
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="form-group" id="decorField">
@@ -416,24 +417,24 @@
         <!-- ─── FOOTAGE fields (only for Footage / Image) ─────── -->
         <div id="footageFields" style="display:none">
             <div class="form-group">
-                <label>Тематика футажей <span class="required">*</span></label>
+                <label id="lbl_footage_theme">Тематика футажей <span class="required">*</span></label>
                 <input type="text" id="footage_theme" placeholder="Природа, город, спорт, продукт...">
             </div>
             <div class="form-group">
-                <label>Что должно быть в нарезке <span class="required">*</span></label>
+                <label id="lbl_footage_content">Что должно быть в нарезке <span class="required">*</span></label>
                 <textarea id="footage_content" placeholder="Опишите что должно происходить в видео..."></textarea>
             </div>
             <div class="form-group">
-                <label>Текст на видео <span class="required">*</span></label>
+                <label id="lbl_footage_text_type">Текст на видео <span class="required">*</span></label>
                 <select id="footage_text_type" onchange="onFootageTextType()">
                     <option value="">Выберите вариант...</option>
-                    <option value="scenario">Повторяем сценарий</option>
-                    <option value="caption_only">Только надпись (без титров)</option>
-                    <option value="subtitles_caption">Титры из сценария + надпись на видео</option>
+                    <option value="scenario" id="opt_scenario">Повторяем сценарий</option>
+                    <option value="caption_only" id="opt_caption_only">Только надпись (без титров)</option>
+                    <option value="subtitles_caption" id="opt_subtitles_caption">Титры из сценария + надпись на видео</option>
                 </select>
             </div>
             <div class="form-group" id="footageCaptionField" style="display:none">
-                <label>Надпись на видео <span class="required">*</span></label>
+                <label id="lbl_footage_caption">Надпись на видео <span class="required">*</span></label>
                 <input type="text" id="footage_caption" placeholder="Текст надписи...">
             </div>
         </div>
@@ -637,48 +638,100 @@ setupAutocomplete('language', 'languageDropdown', languages, 'code', function(it
 });
 
 // ─── Format change → show UGC options ────────────────────────────────────────
+function updateFootageLabels(val) {
+    const isImage = val === 'Image';
+    const set = (id, text) => { const el = document.getElementById(id); if (el) el.innerHTML = text + ' <span class="required">*</span>'; };
+    const setOpt = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+    const setPlaceholder = (id, text) => { const el = document.getElementById(id); if (el) el.placeholder = text; };
+
+    if (isImage) {
+        set('lbl_footage_theme', 'Тематика изображения');
+        set('lbl_footage_content', 'Что должно быть на картинке');
+        set('lbl_footage_text_type', 'Текст на картинке');
+        set('lbl_footage_caption', 'Надпись на картинке');
+        setOpt('opt_scenario', 'Повторяем сценарий');
+        setOpt('opt_caption_only', 'Только надпись (без текста поверх)');
+        setOpt('opt_subtitles_caption', 'Текст из сценария + надпись на картинке');
+        setPlaceholder('footage_theme', 'Продукт, люди, природа, абстракция...');
+        setPlaceholder('footage_content', 'Опишите что должно быть изображено...');
+        setPlaceholder('footage_caption', 'Текст надписи...');
+    } else {
+        set('lbl_footage_theme', 'Тематика футажей');
+        set('lbl_footage_content', 'Что должно быть в нарезке');
+        set('lbl_footage_text_type', 'Текст на видео');
+        set('lbl_footage_caption', 'Надпись на видео');
+        setOpt('opt_scenario', 'Повторяем сценарий');
+        setOpt('opt_caption_only', 'Только надпись (без титров)');
+        setOpt('opt_subtitles_caption', 'Титры из сценария + надпись на видео');
+        setPlaceholder('footage_theme', 'Природа, город, спорт, продукт...');
+        setPlaceholder('footage_content', 'Опишите что должно происходить в видео...');
+        setPlaceholder('footage_caption', 'Текст надписи...');
+    }
+}
+
 function onFormatChange() {
     const val = document.getElementById('format').value;
-    const isUGC = val === 'UGC' || val === 'UGC+Footage';
+    const isUGC     = val === 'UGC' || val === 'UGC+Footage';
     const isFootage = val === 'Footage' || val === 'Image';
 
-    // UGC options block
-    document.getElementById('ugcOptions').classList.toggle('show', isUGC);
-    if (!isUGC) {
-        document.getElementById('repeatCharacter').checked = false;
+    const ugcOptions   = document.getElementById('ugcOptions');
+    const ugcCleanRow  = document.getElementById('ugcCleanRow');
+    const personFields = document.getElementById('personFields');
+    const decorField   = document.getElementById('decorField');
+    const footageFields = document.getElementById('footageFields');
+
+    // ── Footage / Image ────────────────────────────────────────
+    if (isFootage) {
+        ugcOptions.classList.remove('show');
+        if (personFields) personFields.style.display = 'none';
+        if (decorField)   decorField.style.display   = 'none';
+        if (footageFields) footageFields.style.display = '';
+        updateFootageLabels(val);
+        return;
+    }
+
+    // ── Not Footage: reset footage fields ──────────────────────
+    if (footageFields) footageFields.style.display = 'none';
+    document.getElementById('footage_theme').value = '';
+    document.getElementById('footage_content').value = '';
+    document.getElementById('footage_text_type').value = '';
+    document.getElementById('footage_caption').value = '';
+    document.getElementById('footageCaptionField').style.display = 'none';
+
+    // ── UGC / UGC+Footage ──────────────────────────────────────
+    if (isUGC) {
+        ugcOptions.classList.add('show');
+
+        // repeatCharacter checked by default → hide person fields
+        document.getElementById('repeatCharacter').checked = true;
         document.getElementById('changeOptions').classList.remove('show');
-        document.getElementById('ugcCleanRow').style.display = 'none';
-        document.getElementById('ugcTextOptions').style.display = 'none';
-        document.getElementById('ugcCaptionField').style.display = 'none';
-    } else {
-        document.getElementById('ugcCleanRow').style.display = '';
+        if (personFields) personFields.style.display = 'none';
+
+        // ugcClean checked by default
+        // ugcCleanRow is always visible inside ugcOptions
         document.getElementById('ugcClean').checked = true;
         document.getElementById('ugcTextOptions').style.display = 'none';
+        document.getElementById('ugcCaptionField').style.display = 'none';
+        document.getElementById('ugc_caption').value = '';
+
+        // Update clean label
         const lbl = document.getElementById('ugcCleanLabel');
         if (lbl) lbl.textContent = val === 'UGC+Footage'
             ? 'Чистые UGC+Footage без оформления'
             : 'Чистое UGC без оформления';
+
+        updateDecorVisibility();
+        return;
     }
+
+    // ── No format selected ─────────────────────────────────────
+    ugcOptions.classList.remove('show');
+    ugcCleanRow.style.display = 'none';
+    document.getElementById('repeatCharacter').checked = false;
+    document.getElementById('changeOptions').classList.remove('show');
+    if (personFields) personFields.style.display = '';
+    if (decorField)   decorField.style.display   = '';
     updateDecorVisibility();
-
-    // Person fields + decor: hide for Footage/Image
-    const personFields = document.getElementById('personFields');
-    const decorField = document.getElementById('decorField');
-    if (personFields) personFields.style.display = isFootage ? 'none' : '';
-    if (decorField)   decorField.style.display   = isFootage ? 'none' : '';
-
-    // Footage fields
-    const footageFields = document.getElementById('footageFields');
-    if (footageFields) footageFields.style.display = isFootage ? '' : 'none';
-
-    // Reset footage fields when switching away
-    if (!isFootage) {
-        document.getElementById('footage_theme').value = '';
-        document.getElementById('footage_content').value = '';
-        document.getElementById('footage_text_type').value = '';
-        document.getElementById('footage_caption').value = '';
-        document.getElementById('footageCaptionField').style.display = 'none';
-    }
 }
 
 function onFootageTextType() {
@@ -737,7 +790,7 @@ function renderScenarios() {
                 <textarea id="scenario_ru_${i}" placeholder="Текст сценария на русском..."></textarea>
             </div>
             <div class="form-group" style="margin-bottom:0">
-                <label>${trLabel}: (перевод — макс ${MAX_CHARS} символов с пробелами)</label>
+                <label>${(()=>{ const f=document.getElementById('format').value; return (f==='UGC'||f==='UGC+Footage') ? trLabel+': (перевод — макс '+MAX_CHARS+' символов с пробелами)' : trLabel+': (перевод)'; })()}</label>
                 <div class="textarea-wrap">
                     <textarea id="scenario_tr_${i}"
                         placeholder="Текст на ${selectedLangName || 'выбранном языке'}..."
@@ -755,8 +808,10 @@ function renderScenarios() {
 function checkCharCount(textarea, counterId) {
     const len = textarea.value.length;
     const counter = document.getElementById(counterId);
-    counter.textContent = `${len} / ${MAX_CHARS}`;
-    if (len > MAX_CHARS) {
+    const fmt = document.getElementById('format').value;
+    const limited = fmt !== 'Image' && fmt !== 'Footage';
+    counter.textContent = limited ? `${len} / ${MAX_CHARS}` : `${len}`;
+    if (limited && len > MAX_CHARS) {
         textarea.classList.add('over-limit');
         counter.classList.add('over');
     } else {
@@ -892,12 +947,15 @@ function generateBrief() {
     // Validate scenarios
     const langCode = selectedLangCode;
     const isRuLang = langCode === 'RU';
-    for (let i = 1; i <= scenarioCount; i++) {
-        const trEl = document.getElementById(`scenario_tr_${i}`);
-        if (!isRuLang && trEl && trEl.value.length > MAX_CHARS) {
-            showError(`Сценарий ${i}: перевод превышает ${MAX_CHARS} символов. Сократите текст.`);
-            trEl.focus();
-            return;
+    const hasCharLimit = format !== 'Image' && format !== 'Footage';
+    if (hasCharLimit) {
+        for (let i = 1; i <= scenarioCount; i++) {
+            const trEl = document.getElementById(`scenario_tr_${i}`);
+            if (!isRuLang && trEl && trEl.value.length > MAX_CHARS) {
+                showError(`Сценарий ${i}: перевод превышает ${MAX_CHARS} символов. Сократите текст.`);
+                trEl.focus();
+                return;
+            }
         }
     }
 
@@ -920,17 +978,22 @@ function generateBrief() {
         const theme      = document.getElementById('footage_theme').value.trim();
         const fContent   = document.getElementById('footage_content').value.trim();
         const txtTypeVal = document.getElementById('footage_text_type').value;
+        const isImageFmt = format === 'Image';
         const txtTypeMap = {
             'scenario':          'Повторяем сценарий',
-            'caption_only':      'Только надпись (без титров)',
-            'subtitles_caption': 'Титры из сценария + надпись на видео',
+            'caption_only':      isImageFmt ? 'Только надпись (без текста поверх)' : 'Только надпись (без титров)',
+            'subtitles_caption': isImageFmt ? 'Текст из сценария + надпись на картинке' : 'Титры из сценария + надпись на видео',
         };
         const caption = document.getElementById('footage_caption').value.trim();
         text += `\\n\\nМне нужны ${v916} версии 9:16 (Reels/TikTok) и ${v11} версии 1:1 (Feed).\nСделать в тотале ${total} вариантов`;
-        text += `\\n\\nТематика футажей: ${theme}`;
-        text += `\\nЧто в нарезке: ${fContent}`;
-        text += `\\nТекст на видео: ${txtTypeMap[txtTypeVal] || txtTypeVal}`;
-        if (caption) text += `\\nНадпись: ${caption}`;
+        const themeLabel   = isImageFmt ? 'Тематика изображения' : 'Тематика футажей';
+        const contentLabel = isImageFmt ? 'Что на картинке'       : 'Что в нарезке';
+        const textLabel    = isImageFmt ? 'Текст на картинке'     : 'Текст на видео';
+        const captionLabel = isImageFmt ? 'Надпись'               : 'Надпись';
+        text += `\\n\\n${themeLabel}: ${theme}`;
+        text += `\\n${contentLabel}: ${fContent}`;
+        text += `\\n${textLabel}: ${txtTypeMap[txtTypeVal] || txtTypeVal}`;
+        if (caption) text += `\\n${captionLabel}: ${caption}`;
     } else {
         text += `\\n\\nМне нужны ${v916} версии 9:16 (Reels/TikTok) и ${v11} версии 1:1 (Feed).
 Сделать в тотале ${total} вариантов
@@ -978,10 +1041,16 @@ function clearForm() {
         const el = document.getElementById(id);
         if (el) el.required = true;
     });
+    // On clear, if UGC format selected keep repeatCharacter checked and hide personFields
+    const fmt = document.getElementById('format').value;
+    if (fmt === 'UGC' || fmt === 'UGC+Footage') {
+        document.getElementById('repeatCharacter').checked = true;
+        if (pf) pf.style.display = 'none';
+    }
     const ff = document.getElementById('footageFields');
     if (ff) ff.style.display = 'none';
     document.getElementById('footageCaptionField').style.display = 'none';
-    document.getElementById('ugcCleanRow').style.display = 'none';
+    // ugcCleanRow visibility controlled by ugcOptions parent
     document.getElementById('ugcTextOptions').style.display = 'none';
     document.getElementById('ugcCaptionField').style.display = 'none';
     document.getElementById('ugcClean').checked = true;
@@ -1016,8 +1085,13 @@ function showTab(tabId, btn) {
     btn.classList.add('active');
 }
 
-// Init
+// Init — apply initial state on page load
 renderScenarios();
+// On load: no format selected, ensure clean initial state
+document.getElementById('ugcOptions').classList.remove('show');
+// ugcCleanRow visibility controlled by ugcOptions parent
+document.getElementById('footageFields').style.display = 'none';
+updateDecorVisibility();
 </script>
 </body>
 </html>
