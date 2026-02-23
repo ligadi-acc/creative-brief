@@ -316,6 +316,11 @@
             <input type="text" id="context" placeholder="Этот крео хорошо себя показал, мысли, идеи, комментарии, уточнения...">
         </div>
 
+        <div class="form-group">
+            <label>Референс</label>
+            <input type="text" id="reference" placeholder="Ссылка на крео, описание стиля, похожий пример...">
+        </div>
+
         <div class="divider"></div>
 
         <div class="form-row">
@@ -360,7 +365,7 @@
             <div id="ugcCleanRow" style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.07);">
                 <label class="checkbox-row">
                     <input type="checkbox" id="ugcClean" onchange="onUgcCleanChange()" checked>
-                    <span id="ugcCleanLabel">Чистое UGC без оформления</span>
+                    <span id="ugcCleanLabel">Чистое UGC без оформления</span> <span style="color:#eb5757">*</span>
                 </label>
                 <div id="ugcTextOptions" style="display:none; margin-top:10px">
                     <div class="change-options-label">Текст на видео:</div>
@@ -917,6 +922,7 @@ function generateBrief() {
 
     let changeNote = '';
     let ugcTextNote = '';
+    let ugcCapText = '';
     if (isUGC) {
         if (repeatChar) {
             changeNote = 'полностью повторяем персонажа';
@@ -930,6 +936,7 @@ function generateBrief() {
             const ugcTxtType = document.getElementById('ugc_text_type').value;
             if (!ugcTxtType) { showError('Укажите вариант текста на видео'); return; }
             const ugcCap = document.getElementById('ugc_caption').value.trim();
+            ugcCapText = ugcCap; // caption to show after each scenario
             const needsCap = ugcTxtType === 'caption_only' || ugcTxtType === 'subtitles_caption';
             if (needsCap && !ugcCap) { showError('Укажите надпись на видео'); return; }
             const txtTypeMap = {
@@ -938,7 +945,6 @@ function generateBrief() {
                 'subtitles_caption': 'Титры из сценария + надпись на видео',
             };
             ugcTextNote = txtTypeMap[ugcTxtType] || ugcTxtType;
-            if (ugcCap) ugcTextNote += ` | Надпись: ${ugcCap}`;
         } else {
             ugcTextNote = 'Чистое UGC без оформления';
         }
@@ -964,15 +970,26 @@ function generateBrief() {
         showError('Укажите количество версий (9:16 и/или 1:1)'); return;
     }
 
-    let text = `1. Язык: ${language}\n2. Формат: ${format}`;
-    if (isUGC) text += `
-   Персонаж: ${changeNote}
-   Оформление: ${ugcTextNote}`;
-    if (context) text += `\n   Контекст: ${context}`;
+    // ── Build output ────────────────────────────────────────────
+    const nl = '\n';
+    const t = (s) => s.trim();
 
-    const personBlock = repeatChar
-        ? `Возраст: Так же как в рефе\nПол: Так же как в рефе\nВнешность: Так же как в рефе\n\nОписание сцены: Так же как в рефе`
-        : `Возраст: ${age}\nПол: ${gender}\nВнешность: ${appearance}\n\n${scene}`;
+    let lines = [];
+    lines.push(`Язык: ${language}`);
+    lines.push(`Формат: ${format}`);
+    if (isUGC) {
+        lines.push(`Персонаж: ${changeNote}`);
+    }
+    if (context)   lines.push(`Контекст: ${context}`);
+    if (reference) lines.push(`Референс: ${reference}`);
+    if (isUGC && ugcTextNote) {
+        lines.push('');
+        lines.push(`Оформление: ${ugcTextNote}`);
+    }
+
+    lines.push('');
+    lines.push(`Мне нужны ${v916} версии 9:16 (Reels/TikTok) и ${v11} версии 1:1 (Feed).`);
+    lines.push(`Сделать в тотале ${total} вариантов`);
 
     if (isFootage) {
         const theme      = document.getElementById('footage_theme').value.trim();
@@ -985,21 +1002,18 @@ function generateBrief() {
             'subtitles_caption': isImageFmt ? 'Текст из сценария + надпись на картинке' : 'Титры из сценария + надпись на видео',
         };
         const caption = document.getElementById('footage_caption').value.trim();
-        text += `\\n\\nМне нужны ${v916} версии 9:16 (Reels/TikTok) и ${v11} версии 1:1 (Feed).\nСделать в тотале ${total} вариантов`;
         const themeLabel   = isImageFmt ? 'Тематика изображения' : 'Тематика футажей';
-        const contentLabel = isImageFmt ? 'Что на картинке'       : 'Что в нарезке';
-        const textLabel    = isImageFmt ? 'Текст на картинке'     : 'Текст на видео';
-        const captionLabel = isImageFmt ? 'Надпись'               : 'Надпись';
-        text += `\\n\\n${themeLabel}: ${theme}`;
-        text += `\\n${contentLabel}: ${fContent}`;
-        text += `\\n${textLabel}: ${txtTypeMap[txtTypeVal] || txtTypeVal}`;
-        if (caption) text += `\\n${captionLabel}: ${caption}`;
+        const contentLabel = isImageFmt ? 'Что на картинке'      : 'Что в нарезке';
+        const textLabel    = isImageFmt ? 'Текст на картинке'    : 'Текст на видео';
+        lines.push('');
+        lines.push(`${themeLabel}: ${theme}`);
+        lines.push(`${contentLabel}: ${fContent}`);
+        lines.push(`${textLabel}: ${txtTypeMap[txtTypeVal] || txtTypeVal}`);
+        if (caption) lines.push(`Надпись: ${caption}`);
     } else {
-        text += `\\n\\nМне нужны ${v916} версии 9:16 (Reels/TikTok) и ${v11} версии 1:1 (Feed).
-Сделать в тотале ${total} вариантов
-${personBlock}`;
-
-        if (decor) text += `\\n\\n${decor}`;
+        lines.push('');
+        lines.push(personBlock);
+        if (decor) { lines.push(''); lines.push(decor); }
     }
 
     // Scenarios
@@ -1010,15 +1024,25 @@ ${personBlock}`;
         const ruVal = ruEl ? ruEl.value.trim() : '';
         const trVal = trEl ? trEl.value.trim() : '';
         if (ruVal || trVal) {
-            if (!hasScenarios) { text += '\n\n'; hasScenarios = true; }
+            if (!hasScenarios) {
+                lines.push('');
+                lines.push('Сценарии:');
+                hasScenarios = true;
+            }
             const ruLabel = scenarioCount > 1 ? `RU${i}` : 'RU';
             const trLabel = scenarioCount > 1 ? `${langCode}${i}` : langCode;
-            text += `${ruLabel}:\n${ruVal}\n${trLabel}:\n${trVal}\n`;
-            if (i < scenarioCount) text += '\n';
+            lines.push('');
+            lines.push(`${ruLabel}:`);
+            lines.push(ruVal);
+            lines.push(`${trLabel}:`);
+            lines.push(trVal);
+            if (ugcCapText) lines.push(`Текст на видео: ${ugcCapText}`);
         }
     }
 
-    document.getElementById('resultText').value = text.trim();
+    let text = lines.join('\n');
+
+        document.getElementById('resultText').value = text.trim();
     document.getElementById('resultContainer').classList.add('show');
     document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -1059,6 +1083,7 @@ function clearForm() {
     const decorField = document.getElementById('decorField');
     if (decorField) decorField.style.display = '';
     document.getElementById('resultContainer').classList.remove('show');
+    document.getElementById('reference').value = '';
     selectedLangCode = 'EN'; selectedLangName = 'English';
     scenarioCount = 1;
     document.querySelectorAll('.count-btn').forEach((b,i) => b.classList.toggle('active', i===0));
