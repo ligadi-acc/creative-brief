@@ -978,9 +978,15 @@ function generateBrief() {
 
     // ── Build output ────────────────────────────────────────────
     const reference = document.getElementById('reference').value.trim();
-    const personBlock = repeatChar
-        ? `Возраст: Так же как в рефе\nПол: Так же как в рефе\nВнешность: Так же как в рефе\n\nОписание сцены: Так же как в рефе`
-        : `Возраст: ${age}\nПол: ${gender}\nВнешность: ${appearance}\n\n${scene}`;
+    const buildPersonBlock = () => {
+        if (repeatChar) {
+            return 'Возраст: Так же как в рефе\nПол: Так же как в рефе\nВнешность: Так же как в рефе\nОписание сцены: Так же как в рефе';
+        }
+        let pb = `Возраст: ${age}\nПол: ${gender}\nВнешность: ${appearance}`;
+        if (scene) pb += `\n\n${scene}`;
+        return pb;
+    };
+    const personBlock = buildPersonBlock();
 
     let lines = [];
     lines.push(`Язык: ${language}`);
@@ -1020,7 +1026,11 @@ function generateBrief() {
         if (caption) lines.push(`Текст плашки: ${caption}`);
     } else {
         lines.push('');
-        lines.push(personBlock);
+        // Push personBlock lines, filtering trailing empty lines
+        const pbLines = personBlock.split('\n');
+        // trim trailing empty lines
+        while (pbLines.length && pbLines[pbLines.length-1].trim() === '') pbLines.pop();
+        pbLines.forEach(l => lines.push(l));
         if (decor) { lines.push(''); lines.push(decor); }
     }
 
