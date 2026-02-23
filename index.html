@@ -841,8 +841,14 @@ function hideError() {
 
 function onUgcCleanChange() {
     const clean = document.getElementById('ugcClean').checked;
-    document.getElementById('ugcTextOptions').style.display = clean ? 'none' : '';
+    document.getElementById('ugcTextOptions').style.display = clean ? 'none' : 'block';
     if (clean) {
+        // Checked: hide text options, clear them
+        document.getElementById('ugc_text_type').value = '';
+        document.getElementById('ugcCaptionField').style.display = 'none';
+        document.getElementById('ugc_caption').value = '';
+    } else {
+        // Unchecked: show text options, reset select to placeholder
         document.getElementById('ugc_text_type').value = '';
         document.getElementById('ugcCaptionField').style.display = 'none';
         document.getElementById('ugc_caption').value = '';
