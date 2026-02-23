@@ -907,7 +907,9 @@ function generateBrief() {
     }
 
     let text = `1. Язык: ${language}\n2. Формат: ${format}`;
-    if (isUGC) text += `\n   Персонаж: ${changeNote}\n   Оформление: ${ugcTextNote}`;
+    if (isUGC) text += `
+   Персонаж: ${changeNote}
+   Оформление: ${ugcTextNote}`;
     if (context) text += `\n   Контекст: ${context}`;
 
     const personBlock = repeatChar
