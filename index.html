@@ -372,14 +372,14 @@
                     <div class="form-group" style="margin-top:6px; margin-bottom:6px">
                         <select id="ugc_text_type" onchange="onUgcTextType()">
                             <option value="">Выберите вариант...</option>
-                            <option value="scenario">Повторяем сценарий</option>
-                            <option value="caption_only">Только надпись (без титров)</option>
-                            <option value="subtitles_caption">Титры из сценария + надпись на видео</option>
+                            <option value="subtitles">Субтитры</option>
+                            <option value="caption_only">Только текстовые плашки</option>
+                            <option value="subtitles_caption">Субтитры + текстовые плашки</option>
                         </select>
                     </div>
                     <div class="form-group" id="ugcCaptionField" style="display:none; margin-bottom:0">
-                        <label>Надпись на видео <span class="required">*</span></label>
-                        <input type="text" id="ugc_caption" placeholder="Текст надписи...">
+                        <label>Текст плашки <span class="required">*</span></label>
+                        <input type="text" id="ugc_caption" placeholder="Текст плашки...">
                     </div>
                 </div>
             </div>
@@ -433,14 +433,14 @@
                 <label id="lbl_footage_text_type">Текст на видео <span class="required">*</span></label>
                 <select id="footage_text_type" onchange="onFootageTextType()">
                     <option value="">Выберите вариант...</option>
-                    <option value="scenario" id="opt_scenario">Повторяем сценарий</option>
-                    <option value="caption_only" id="opt_caption_only">Только надпись (без титров)</option>
-                    <option value="subtitles_caption" id="opt_subtitles_caption">Титры из сценария + надпись на видео</option>
+                    <option value="subtitles" id="opt_scenario">Субтитры</option>
+                    <option value="caption_only" id="opt_caption_only">Только текстовые плашки</option>
+                    <option value="subtitles_caption" id="opt_subtitles_caption">Субтитры + текстовые плашки</option>
                 </select>
             </div>
             <div class="form-group" id="footageCaptionField" style="display:none">
-                <label id="lbl_footage_caption">Надпись на видео <span class="required">*</span></label>
-                <input type="text" id="footage_caption" placeholder="Текст надписи...">
+                <label id="lbl_footage_caption">Текст плашки <span class="required">*</span></label>
+                <input type="text" id="footage_caption" placeholder="Текст плашки...">
             </div>
         </div>
 
@@ -654,9 +654,9 @@ function updateFootageLabels(val) {
         set('lbl_footage_content', 'Что должно быть на картинке');
         set('lbl_footage_text_type', 'Текст на картинке');
         set('lbl_footage_caption', 'Надпись на картинке');
-        setOpt('opt_scenario', 'Повторяем сценарий');
-        setOpt('opt_caption_only', 'Только надпись (без текста поверх)');
-        setOpt('opt_subtitles_caption', 'Текст из сценария + надпись на картинке');
+        setOpt('opt_scenario', 'Субтитры');
+        setOpt('opt_caption_only', 'Только текстовые плашки');
+        setOpt('opt_subtitles_caption', 'Субтитры + текстовые плашки');
         setPlaceholder('footage_theme', 'Продукт, люди, природа, абстракция...');
         setPlaceholder('footage_content', 'Опишите что должно быть изображено...');
         setPlaceholder('footage_caption', 'Текст надписи...');
@@ -664,10 +664,10 @@ function updateFootageLabels(val) {
         set('lbl_footage_theme', 'Тематика футажей');
         set('lbl_footage_content', 'Что должно быть в нарезке');
         set('lbl_footage_text_type', 'Текст на видео');
-        set('lbl_footage_caption', 'Надпись на видео');
-        setOpt('opt_scenario', 'Повторяем сценарий');
-        setOpt('opt_caption_only', 'Только надпись (без титров)');
-        setOpt('opt_subtitles_caption', 'Титры из сценария + надпись на видео');
+        set('lbl_footage_caption', 'Текст плашки');
+        setOpt('opt_scenario', 'Субтитры');
+        setOpt('opt_caption_only', 'Только текстовые плашки');
+        setOpt('opt_subtitles_caption', 'Субтитры + текстовые плашки');
         setPlaceholder('footage_theme', 'Природа, город, спорт, продукт...');
         setPlaceholder('footage_content', 'Опишите что должно происходить в видео...');
         setPlaceholder('footage_caption', 'Текст надписи...');
@@ -940,9 +940,9 @@ function generateBrief() {
             const needsCap = ugcTxtType === 'caption_only' || ugcTxtType === 'subtitles_caption';
             if (needsCap && !ugcCap) { showError('Укажите надпись на видео'); return; }
             const txtTypeMap = {
-                'scenario':          'Повторяем сценарий',
-                'caption_only':      'Только надпись (без титров)',
-                'subtitles_caption': 'Титры из сценария + надпись на видео',
+                'subtitles':         'Субтитры',
+                'caption_only':      'Только текстовые плашки',
+                'subtitles_caption': 'Субтитры + текстовые плашки',
             };
             ugcTextNote = txtTypeMap[ugcTxtType] || ugcTxtType;
         } else {
@@ -971,8 +971,10 @@ function generateBrief() {
     }
 
     // ── Build output ────────────────────────────────────────────
-    const nl = '\n';
-    const t = (s) => s.trim();
+    const reference = document.getElementById('reference').value.trim();
+    const personBlock = repeatChar
+        ? `Возраст: Так же как в рефе\nПол: Так же как в рефе\nВнешность: Так же как в рефе\n\nОписание сцены: Так же как в рефе`
+        : `Возраст: ${age}\nПол: ${gender}\nВнешность: ${appearance}\n\n${scene}`;
 
     let lines = [];
     lines.push(`Язык: ${language}`);
@@ -997,9 +999,9 @@ function generateBrief() {
         const txtTypeVal = document.getElementById('footage_text_type').value;
         const isImageFmt = format === 'Image';
         const txtTypeMap = {
-            'scenario':          'Повторяем сценарий',
-            'caption_only':      isImageFmt ? 'Только надпись (без текста поверх)' : 'Только надпись (без титров)',
-            'subtitles_caption': isImageFmt ? 'Текст из сценария + надпись на картинке' : 'Титры из сценария + надпись на видео',
+            'subtitles':         isImageFmt ? 'Субтитры' : 'Субтитры',
+            'caption_only':      isImageFmt ? 'Только текстовые плашки' : 'Только текстовые плашки',
+            'subtitles_caption': isImageFmt ? 'Субтитры + текстовые плашки' : 'Субтитры + текстовые плашки',
         };
         const caption = document.getElementById('footage_caption').value.trim();
         const themeLabel   = isImageFmt ? 'Тематика изображения' : 'Тематика футажей';
@@ -1009,7 +1011,7 @@ function generateBrief() {
         lines.push(`${themeLabel}: ${theme}`);
         lines.push(`${contentLabel}: ${fContent}`);
         lines.push(`${textLabel}: ${txtTypeMap[txtTypeVal] || txtTypeVal}`);
-        if (caption) lines.push(`Надпись: ${caption}`);
+        if (caption) lines.push(`Текст плашки: ${caption}`);
     } else {
         lines.push('');
         lines.push(personBlock);
@@ -1036,7 +1038,7 @@ function generateBrief() {
             lines.push(ruVal);
             lines.push(`${trLabel}:`);
             lines.push(trVal);
-            if (ugcCapText) lines.push(`Текст на видео: ${ugcCapText}`);
+            if (ugcCapText) lines.push(`Текст плашки: ${ugcCapText}`);
         }
     }
 
