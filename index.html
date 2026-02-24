@@ -66,6 +66,18 @@
         .required { color: #eb5757; }
         .hint { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
 
+        optgroup {
+            background: #1e1e1e;
+            color: rgba(255,255,255,0.35);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        option {
+            background: #1e1e1e;
+            color: rgba(255,255,255,0.85);
+            padding: 4px 0;
+        }
         select {
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='rgba(255,255,255,0.5)' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
@@ -186,6 +198,62 @@
             color: #7fc0f5;
         }
 
+        /* Плашки */
+        .plashki-block {
+            background: rgba(255,255,255,0.035);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+        }
+        .plashki-block input[type="text"] {
+            background: rgba(255,255,255,0.055);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 5px;
+            color: rgba(255,255,255,0.85);
+            padding: 7px 10px;
+            font-size: 13px;
+            font-family: inherit;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .plashki-block input[type="text"]:focus {
+            border-color: rgba(35,131,226,0.7);
+            box-shadow: 0 0 0 2px rgba(35,131,226,0.15);
+        }
+        .plashki-block input[type="text"]::placeholder {
+            color: rgba(255,255,255,0.2);
+        }
+        .plashki-title {
+            font-size: 11px; font-weight: 600;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase; letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .plashka-row {
+            display: flex; gap: 6px; align-items: center;
+            margin-bottom: 6px;
+        }
+        .plashka-row input {
+            flex: 1;
+        }
+        .plashka-remove {
+            background: none; border: none;
+            color: rgba(255,87,87,0.7); cursor: pointer;
+            font-size: 16px; line-height: 1; padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .plashka-remove:hover { color: #eb5757; background: rgba(235,87,87,0.1); }
+        .btn-add-plashka {
+            font-size: 11px; padding: 4px 10px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 4px; color: rgba(255,255,255,0.6);
+            cursor: pointer; margin-top: 2px;
+        }
+        .btn-add-plashka:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
         .scenario-block {
             margin-bottom: 16px;
         }
@@ -281,7 +349,7 @@
 <body>
 <div class="container">
     <h1 class="page-title">📋 Создание ТЗ на креативы</h1>
-    <p class="page-subtitle">Генератор брифов</p>
+    <p class="page-subtitle">Генератор брифов для байеров</p>
 
     <nav class="nav-tabs">
         <button class="nav-tab active" onclick="showTab('generator', this)">Генератор ТЗ</button>
@@ -304,10 +372,22 @@
             <label>Тип креатива <span class="required">*</span></label>
             <select id="format" onchange="onFormatChange()">
                 <option value="">Выберите тип...</option>
+                <optgroup label="── UGC ──────────────────">
                 <option value="UGC">🎬 UGC</option>
-                <option value="UGC+Footage">🎞️ UGC+Footage</option>
+                <option value="UGC+decor">🎬✨ UGC + оформление</option>
+                </optgroup>
+                <optgroup label="── UGC + Footage ────────">
+                <option value="Mix">🔀 Mix (UGC + футаж)</option>
+                <option value="Cutout">✂️ Cutout UGC + footage</option>
+                <option value="DepthFX">🌀 UGC-Depth FX</option>
+                <option value="SplitOffer">↔️ UGC split screen (offer)</option>
+                <option value="SplitZalip">↔️ UGC split screen (zalip)</option>
+                </optgroup>
+                <optgroup label="── Footage / Static ─────">
                 <option value="Footage">🎥 Footage</option>
-                <option value="Image">🖼️ Image</option>
+                <option value="AEMockup">⚙️ After Effects Mockup</option>
+                <option value="Static">🖼️ Static Simple / Static-Pulse FX</option>
+                </optgroup>
             </select>
         </div>
 
@@ -318,7 +398,7 @@
 
         <div class="form-group">
             <label>Референс</label>
-            <input type="text" id="reference" placeholder="Ссылка на крео, описание стиля, похожий пример...">
+            <input type="text" id="ref_link" placeholder="Ссылка на крео, описание стиля, похожий пример...">
         </div>
 
         <div class="divider"></div>
@@ -377,10 +457,7 @@
                             <option value="subtitles_caption">Субтитры + текстовые плашки</option>
                         </select>
                     </div>
-                    <div class="form-group" id="ugcCaptionField" style="display:none; margin-bottom:0">
-                        <label>Текст плашки <span class="required">*</span></label>
-                        <input type="text" id="ugc_caption" placeholder="Текст плашки...">
-                    </div>
+
                 </div>
             </div>
         </div>
@@ -438,10 +515,7 @@
                     <option value="subtitles_caption" id="opt_subtitles_caption">Субтитры + текстовые плашки</option>
                 </select>
             </div>
-            <div class="form-group" id="footageCaptionField" style="display:none">
-                <label id="lbl_footage_caption">Текст плашки <span class="required">*</span></label>
-                <input type="text" id="footage_caption" placeholder="Текст плашки...">
-            </div>
+
         </div>
 
         <div class="divider"></div>
@@ -482,43 +556,89 @@
     <!-- ═══ TAB: Справочник форматов ═══ -->
     <div id="reference" class="tab-content">
         <div class="format-section">
-            <h3>1. UGC (User Generated Content)</h3>
+            <h3>UGC (без футажей)</h3>
+
             <div class="format-card">
-                <h4><span class="format-tag">UGC</span> <span class="complexity-badge complexity-medium">Средняя</span></h4>
-                <p>Полностью AI-сгенерированный персонаж. Без оформления, субтитров, графики.</p>
-                <div class="format-features">
-                    <h5>Особенности:</h5>
-                    <ul>
-                        <li>Повторение персонажа 1 к 1 невозможно</li>
-                        <li>10-15 сек — максимальное качество</li>
-                        <li>15-25 сек — качество «мыльнее»</li>
-                    </ul>
-                </div>
+                <h4><span class="format-tag">UGC</span></h4>
+                <p>Полностью AI-сгенерированный персонаж, снятый в реалистичной манере. Без оформления, субтитров и графики. Выглядит как запись реального человека на телефон.</p>
+                <div class="format-features"><h5>Особенности:</h5><ul>
+                    <li>Повторение персонажа 1 к 1 — невозможно, каждый раз новый</li>
+                    <li>Оптимальная длина: 10–15 сек, до 25 сек — качество падает</li>
+                    <li>Генерация только по промпту, не из изображения</li>
+                </ul></div>
+            </div>
+
+            <div class="format-card">
+                <h4><span class="format-tag">UGC + оформление</span></h4>
+                <p>UGC-персонаж в 1–4 позах/ракурсах одной локации. Создаёт динамичный UGC-эффект. Обязательно добавляется оформление — без него выглядит безжизненно.</p>
+                <div class="format-features"><h5>Особенности:</h5><ul>
+                    <li>Можно генерировать из изображения — перенос персонажа между крео возможен</li>
+                    <li>Аватар стоит на месте в каждом ракурсе, не перемещается</li>
+                    <li>Чем больше поз — тем дольше производство</li>
+                </ul></div>
             </div>
         </div>
+
         <div class="format-section">
-            <h3>2. UGC + Footage</h3>
+            <h3>UGC + Footage</h3>
+
             <div class="format-card">
-                <h4><span class="format-tag">UGC+Footage</span> <span class="complexity-badge complexity-high">Высокая</span></h4>
-                <p>UGC → хук/вступление → футажи → UGC → CTA</p>
+                <h4><span class="format-tag">Mix (UGC + футаж)</span></h4>
+                <p>Чередование сцен: UGC-персонаж говорит хук → футажи иллюстрируют смысл → персонаж произносит CTA. Создаёт ощущение живого видеоблога.</p>
+            </div>
+
+            <div class="format-card">
+                <h4><span class="format-tag">Cutout UGC + footage</span></h4>
+                <p>UGC-персонаж вырезается от фона и помещается в угол экрана. Основное пространство занимает футажный ряд. Персонаж всегда в кадре, не перекрывает основное видео. Возможен вариант с аватаром в круге.</p>
+            </div>
+
+            <div class="format-card">
+                <h4><span class="format-tag">UGC-Depth FX</span> <span class="complexity-badge complexity-high">Сложный</span></h4>
+                <p>Персонаж вырезается и становится передним слоем. Между ним и фоном вставляется слой футажа. Видео трёхслойное: персонаж → полупрозрачный футаж → исходный фон.</p>
+                <div class="format-features"><h5>Особенности:</h5><ul>
+                    <li>Один из самых сложных форматов</li>
+                    <li>Доступен вариант Multipose</li>
+                </ul></div>
+            </div>
+
+            <div class="format-card">
+                <h4><span class="format-tag">UGC split screen (offer)</span></h4>
+                <p>Экран делится на две части: UGC-персонаж + тематический футаж по офферу. Вертикально или горизонтально.</p>
+            </div>
+
+            <div class="format-card">
+                <h4><span class="format-tag">UGC split screen (zalip)</span></h4>
+                <p>Экран делится на две части: UGC-персонаж + залипательное видео (ASMR, satisfying footage, динамичные сцены). Удерживает внимание параллельно с речью персонажа.</p>
             </div>
         </div>
+
         <div class="format-section">
-            <h3>3. Footage</h3>
+            <h3>Footage и статика</h3>
+
             <div class="format-card">
-                <h4><span class="format-tag">Footage</span> <span class="complexity-badge complexity-low">Низкая</span></h4>
-                <p>Только футажи, без UGC-персонажа.</p>
+                <h4><span class="format-tag">Footage</span></h4>
+                <p>Видео целиком из футажей: нарезки монтируются последовательно. Динамичная музыка, субтитры, анимированные плашки, стрелки, эффекты. Никаких персонажей — только контент, иллюстрирующий тему.</p>
             </div>
-        </div>
-        <div class="format-section">
-            <h3>4. Image</h3>
+
             <div class="format-card">
-                <h4><span class="format-tag">Image</span> <span class="complexity-badge complexity-low">Низкая</span></h4>
-                <p>Статичная картинка или статика с эффектами.</p>
+                <h4><span class="format-tag">After Effects Mockup</span> <span class="complexity-badge complexity-high">Сложный</span></h4>
+                <p>Технический ролик в Adobe After Effects. Чаще всего макап смартфона: интерфейс приложения, экраны, переходы, анимации, инфографика. Детально показывает продукт изнутри.</p>
+                <div class="format-features"><h5>Особенности:</h5><ul>
+                    <li>Самый сложный тип технически, требует мощного железа</li>
+                    <li>Много движущихся элементов, анимаций интерфейса</li>
+                </ul></div>
+            </div>
+
+            <div class="format-card">
+                <h4><span class="format-tag">Static Simple / Static-Pulse FX</span></h4>
+                <p>Статичное изображение с ключевым посылом + музыка. Иногда минимальные эффекты. Напоминает рекламный баннер в виде видео. Возможен вариант без музыки — просто картинка.</p>
+                <div class="format-features"><h5>Особенности:</h5><ul>
+                    <li>Сценария нет — только визуал и посыл на изображении</li>
+                    <li>Быстрое производство, хорошо для тестирования офферов</li>
+                </ul></div>
             </div>
         </div>
     </div>
-</div>
 
 <script>
 const MAX_CHARS = 420;
@@ -644,7 +764,7 @@ setupAutocomplete('language', 'languageDropdown', languages, 'code', function(it
 
 // ─── Format change → show UGC options ────────────────────────────────────────
 function updateFootageLabels(val) {
-    const isImage = val === 'Image';
+    const isImage = val === 'Static';
     const set = (id, text) => { const el = document.getElementById(id); if (el) el.innerHTML = text + ' <span class="required">*</span>'; };
     const setOpt = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
     const setPlaceholder = (id, text) => { const el = document.getElementById(id); if (el) el.placeholder = text; };
@@ -676,8 +796,8 @@ function updateFootageLabels(val) {
 
 function onFormatChange() {
     const val = document.getElementById('format').value;
-    const isUGC     = val === 'UGC' || val === 'UGC+Footage';
-    const isFootage = val === 'Footage' || val === 'Image';
+    const isUGC     = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(val);
+    const isFootage = ['Footage','AEMockup','Static'].includes(val);
 
     const ugcOptions   = document.getElementById('ugcOptions');
     const ugcCleanRow  = document.getElementById('ugcCleanRow');
@@ -700,8 +820,6 @@ function onFormatChange() {
     document.getElementById('footage_theme').value = '';
     document.getElementById('footage_content').value = '';
     document.getElementById('footage_text_type').value = '';
-    document.getElementById('footage_caption').value = '';
-    document.getElementById('footageCaptionField').style.display = 'none';
 
     // ── UGC / UGC+Footage ──────────────────────────────────────
     if (isUGC) {
@@ -716,13 +834,11 @@ function onFormatChange() {
         // ugcCleanRow is always visible inside ugcOptions
         document.getElementById('ugcClean').checked = true;
         document.getElementById('ugcTextOptions').style.display = 'none';
-        document.getElementById('ugcCaptionField').style.display = 'none';
-        document.getElementById('ugc_caption').value = '';
-
+    
         // Update clean label
         const lbl = document.getElementById('ugcCleanLabel');
-        if (lbl) lbl.textContent = val === 'UGC+Footage'
-            ? 'Чистые UGC+Footage без оформления'
+        if (lbl) lbl.textContent = ['Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(val)
+            ? 'Чистый формат без оформления'
             : 'Чистое UGC без оформления';
 
         updateDecorVisibility();
@@ -737,13 +853,11 @@ function onFormatChange() {
     if (personFields) personFields.style.display = '';
     if (decorField)   decorField.style.display   = '';
     updateDecorVisibility();
+    renderScenarios();
 }
 
 function onFootageTextType() {
-    const val = document.getElementById('footage_text_type').value;
-    const needsCaption = val === 'caption_only' || val === 'subtitles_caption';
-    document.getElementById('footageCaptionField').style.display = needsCaption ? '' : 'none';
-    document.getElementById('footage_caption').required = needsCaption;
+    renderScenarios();
 }
 
 function onRepeatChange() {
@@ -776,26 +890,84 @@ function setScenarioCount(n, btn) {
     renderScenarios();
 }
 
+
+function needsPlashki() {
+    const fmt = document.getElementById('format').value;
+    const isUGC = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(fmt);
+    const isFootage = ['Footage','AEMockup','Static'].includes(fmt);
+    if (isUGC) {
+        const clean = document.getElementById('ugcClean').checked;
+        if (clean) return false;
+        const t = document.getElementById('ugc_text_type').value;
+        return t === 'caption_only' || t === 'subtitles_caption';
+    }
+    if (isFootage) {
+        const t = document.getElementById('footage_text_type').value;
+        return t === 'caption_only' || t === 'subtitles_caption';
+    }
+    return false;
+}
+
+function addPlashka(scenarioIdx) {
+    const container = document.getElementById(`plashki_${scenarioIdx}`);
+    const num = container.children.length + 1;
+    const row = document.createElement('div');
+    row.className = 'plashka-row';
+    row.innerHTML = `
+        <input type="text" placeholder="Текст плашки ${num}...">
+        <button class="plashka-remove" onclick="this.parentElement.remove()" title="Удалить">×</button>
+    `;
+    container.appendChild(row);
+}
+
+function getPlashkiValues(scenarioIdx) {
+    const container = document.getElementById(`plashki_${scenarioIdx}`);
+    if (!container) return [];
+    return Array.from(container.querySelectorAll('input'))
+        .map(el => el.value.trim())
+        .filter(v => v);
+}
+
 function renderScenarios() {
     const container = document.getElementById('scenariosContainer');
     const langCode = selectedLangCode;
     const isRu = langCode === 'RU';
+    const showPlashki = needsPlashki();
+    const fmt = document.getElementById('format').value;
+    const limited = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(fmt);
 
     container.innerHTML = '';
     for (let i = 1; i <= scenarioCount; i++) {
         const ruLabel = scenarioCount > 1 ? `RU${i}` : 'RU';
         const trLabel = scenarioCount > 1 ? `${langCode}${i}` : langCode;
+        const limLabel = limited
+            ? `${trLabel}: (перевод — макс ${MAX_CHARS} символов с пробелами)`
+            : `${trLabel}: (перевод)`;
 
         const block = document.createElement('div');
         block.className = 'scenario-block';
+
+        const plashkiHtml = showPlashki ? `
+            <div class="plashki-block">
+                <div class="plashki-title">Текст плашки</div>
+                <div id="plashki_${i}">
+                    <div class="plashka-row">
+                        <input type="text" placeholder="Текст плашки 1...">
+                        <button class="plashka-remove" onclick="this.parentElement.remove()" title="Удалить">×</button>
+                    </div>
+                </div>
+                <button class="btn-add-plashka" onclick="addPlashka(${i})">+ Добавить плашку</button>
+            </div>` : '';
+
         block.innerHTML = `
             ${scenarioCount > 1 ? `<div class="scenario-block-title">Сценарий ${i}</div>` : ''}
+            ${plashkiHtml}
             <div class="form-group" style="margin-bottom:8px">
                 <label>${ruLabel}: (русский)</label>
                 <textarea id="scenario_ru_${i}" placeholder="Текст сценария на русском..."></textarea>
             </div>
             <div class="form-group" style="margin-bottom:0">
-                <label>${(()=>{ const f=document.getElementById('format').value; return (f==='UGC'||f==='UGC+Footage') ? trLabel+': (перевод — макс '+MAX_CHARS+' символов с пробелами)' : trLabel+': (перевод)'; })()}</label>
+                <label>${limLabel}</label>
                 <div class="textarea-wrap">
                     <textarea id="scenario_tr_${i}"
                         placeholder="Текст на ${selectedLangName || 'выбранном языке'}..."
@@ -814,7 +986,7 @@ function checkCharCount(textarea, counterId) {
     const len = textarea.value.length;
     const counter = document.getElementById(counterId);
     const fmt = document.getElementById('format').value;
-    const limited = fmt !== 'Image' && fmt !== 'Footage';
+    const limited = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(fmt);
     counter.textContent = limited ? `${len} / ${MAX_CHARS}` : `${len}`;
     if (limited && len > MAX_CHARS) {
         textarea.classList.add('over-limit');
@@ -843,22 +1015,16 @@ function onUgcCleanChange() {
     const clean = document.getElementById('ugcClean').checked;
     document.getElementById('ugcTextOptions').style.display = clean ? 'none' : 'block';
     if (clean) {
-        // Checked: hide text options, clear them
         document.getElementById('ugc_text_type').value = '';
-        document.getElementById('ugcCaptionField').style.display = 'none';
-        document.getElementById('ugc_caption').value = '';
     } else {
-        // Unchecked: show text options, reset select to placeholder
         document.getElementById('ugc_text_type').value = '';
-        document.getElementById('ugcCaptionField').style.display = 'none';
-        document.getElementById('ugc_caption').value = '';
     }
     updateDecorVisibility();
 }
 
 function updateDecorVisibility() {
     const format = document.getElementById('format').value;
-    const isUGC = format === 'UGC' || format === 'UGC+Footage';
+    const isUGC = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(format);
     const repeatChar = document.getElementById('repeatCharacter').checked;
     const ugcClean = document.getElementById('ugcClean').checked;
     const decorField = document.getElementById('decorField');
@@ -869,10 +1035,7 @@ function updateDecorVisibility() {
 }
 
 function onUgcTextType() {
-    const val = document.getElementById('ugc_text_type').value;
-    const needsCap = val === 'caption_only' || val === 'subtitles_caption';
-    document.getElementById('ugcCaptionField').style.display = needsCap ? '' : 'none';
-    document.getElementById('ugc_caption').required = needsCap;
+    renderScenarios();
 }
 
 function generateBrief() {
@@ -888,8 +1051,8 @@ function generateBrief() {
     const scene      = document.getElementById('scene').value.trim();
     const decor      = document.getElementById('decor').value.trim();
 
-    const isUGC     = format === 'UGC' || format === 'UGC+Footage';
-    const isFootage = format === 'Footage' || format === 'Image';
+    const isUGC     = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(format);
+    const isFootage = ['Footage','AEMockup','Static'].includes(format);
     const repeatChar = isUGC && document.getElementById('repeatCharacter').checked;
 
     // Validate UGC: checkbox is required
@@ -916,10 +1079,7 @@ function generateBrief() {
         if (!theme || !footage || !txtType) {
             showError('Заполните все обязательные поля для Footage'); return;
         }
-        const needsCap = txtType === 'caption_only' || txtType === 'subtitles_caption';
-        if (needsCap && !document.getElementById('footage_caption').value.trim()) {
-            showError('Укажите надпись на видео'); return;
-        }
+
     }
 
     if (!language || !format) {
@@ -941,10 +1101,6 @@ function generateBrief() {
         if (!ugcClean) {
             const ugcTxtType = document.getElementById('ugc_text_type').value;
             if (!ugcTxtType) { showError('Укажите вариант текста на видео'); return; }
-            const ugcCap = document.getElementById('ugc_caption').value.trim();
-            ugcCapText = ugcCap; // caption to show after each scenario
-            const needsCap = ugcTxtType === 'caption_only' || ugcTxtType === 'subtitles_caption';
-            if (needsCap && !ugcCap) { showError('Укажите надпись на видео'); return; }
             const txtTypeMap = {
                 'subtitles':         'Субтитры',
                 'caption_only':      'Только текстовые плашки',
@@ -959,7 +1115,7 @@ function generateBrief() {
     // Validate scenarios
     const langCode = selectedLangCode;
     const isRuLang = langCode === 'RU';
-    const hasCharLimit = format !== 'Image' && format !== 'Footage';
+    const hasCharLimit = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(format);
     if (hasCharLimit) {
         for (let i = 1; i <= scenarioCount; i++) {
             const trEl = document.getElementById(`scenario_tr_${i}`);
@@ -977,7 +1133,7 @@ function generateBrief() {
     }
 
     // ── Build output ────────────────────────────────────────────
-    const reference = document.getElementById('reference').value.trim();
+    const reference = document.getElementById('ref_link').value.trim();
     const buildPersonBlock = () => {
         if (repeatChar) {
             return 'Возраст: Так же как в рефе\nПол: Так же как в рефе\nВнешность: Так же как в рефе\nОписание сцены: Так же как в рефе';
@@ -1009,13 +1165,13 @@ function generateBrief() {
         const theme      = document.getElementById('footage_theme').value.trim();
         const fContent   = document.getElementById('footage_content').value.trim();
         const txtTypeVal = document.getElementById('footage_text_type').value;
-        const isImageFmt = format === 'Image';
+        const isImageFmt = format === 'Static';
         const txtTypeMap = {
             'subtitles':         isImageFmt ? 'Субтитры' : 'Субтитры',
             'caption_only':      isImageFmt ? 'Только текстовые плашки' : 'Только текстовые плашки',
             'subtitles_caption': isImageFmt ? 'Субтитры + текстовые плашки' : 'Субтитры + текстовые плашки',
         };
-        const caption = document.getElementById('footage_caption').value.trim();
+        const caption = '';
         const themeLabel   = isImageFmt ? 'Тематика изображения' : 'Тематика футажей';
         const contentLabel = isImageFmt ? 'Что на картинке'      : 'Что в нарезке';
         const textLabel    = isImageFmt ? 'Текст на картинке'    : 'Текст на видео';
@@ -1054,7 +1210,13 @@ function generateBrief() {
             lines.push(ruVal);
             lines.push(`${trLabel}:`);
             lines.push(trVal);
-            if (ugcCapText) lines.push(`Текст плашки: ${ugcCapText}`);
+            // Collect плашки for this scenario
+            const plashkiVals = getPlashkiValues(i);
+            if (plashkiVals.length > 0) {
+                plashkiVals.forEach(p => lines.push(`Текст плашки: ${p}`));
+            } else if (ugcCapText) {
+                lines.push(`Текст плашки: ${ugcCapText}`);
+            }
         }
     }
 
@@ -1085,23 +1247,20 @@ function clearForm() {
     });
     // On clear, if UGC format selected keep repeatCharacter checked and hide personFields
     const fmt = document.getElementById('format').value;
-    if (fmt === 'UGC' || fmt === 'UGC+Footage') {
+    if (['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(fmt)) {
         document.getElementById('repeatCharacter').checked = true;
         if (pf) pf.style.display = 'none';
     }
     const ff = document.getElementById('footageFields');
     if (ff) ff.style.display = 'none';
-    document.getElementById('footageCaptionField').style.display = 'none';
     // ugcCleanRow visibility controlled by ugcOptions parent
     document.getElementById('ugcTextOptions').style.display = 'none';
-    document.getElementById('ugcCaptionField').style.display = 'none';
     document.getElementById('ugcClean').checked = true;
     document.getElementById('ugc_text_type').value = '';
-    document.getElementById('ugc_caption').value = '';
     const decorField = document.getElementById('decorField');
     if (decorField) decorField.style.display = '';
     document.getElementById('resultContainer').classList.remove('show');
-    document.getElementById('reference').value = '';
+    document.getElementById('ref_link').value = '';
     selectedLangCode = 'EN'; selectedLangName = 'English';
     scenarioCount = 1;
     document.querySelectorAll('.count-btn').forEach((b,i) => b.classList.toggle('active', i===0));
