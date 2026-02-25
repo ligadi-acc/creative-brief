@@ -391,15 +391,7 @@
             </select>
         </div>
 
-        <div class="form-group" style="margin-top:12px">
-            <label>Контекст</label>
-            <input type="text" id="context" placeholder="Этот крео хорошо себя показал, мысли, идеи, комментарии, уточнения...">
-        </div>
 
-        <div class="form-group">
-            <label>Референс</label>
-            <input type="text" id="ref_link" placeholder="Ссылка на крео, описание стиля, похожий пример...">
-        </div>
 
         <div class="divider"></div>
 
@@ -424,21 +416,31 @@
             <div class="change-options" id="changeOptions">
                 <div class="change-options-label">Что меняем:</div>
                 <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c4" value="всё новое: разные персонажи в разных локациях">
+                    <input type="radio" name="changeType" id="c4" value="всё новое: разные персонажи в разных локациях" onchange="updateRefRequired()">
                     <label for="c4">Всё новое: разные персонажи в разных локациях</label>
                 </div>
                 <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c1" value="меняем только персонажа">
+                    <input type="radio" name="changeType" id="c1" value="меняем только персонажа" onchange="updateRefRequired()">
                     <label for="c1">Меняем только персонажа</label>
                 </div>
                 <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c2" value="меняем только одежду персонажа">
+                    <input type="radio" name="changeType" id="c2" value="меняем только одежду персонажа" onchange="updateRefRequired()">
                     <label for="c2">Меняем только одежду персонажа</label>
                 </div>
                 <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c3" value="меняем локацию/фон персонажа">
+                    <input type="radio" name="changeType" id="c3" value="меняем локацию/фон персонажа" onchange="updateRefRequired()">
                     <label for="c3">Меняем локацию/фон персонажа</label>
                 </div>
+            </div>
+
+            <!-- Референс и Комментарий — прямо под блоком персонажа -->
+            <div class="form-group" style="margin-top:10px" id="refFieldRow">
+                <label>Референс <span id="refRequired" class="required" style="display:none">*</span></label>
+                <input type="text" id="ref_link" placeholder="Ссылка на крео, описание стиля, похожий пример...">
+            </div>
+            <div class="form-group">
+                <label>Комментарий</label>
+                <input type="text" id="context" placeholder="Этот крео хорошо себя показал, мысли, идеи, уточнения...">
             </div>
 
             <!-- Чистое UGC / оформление — всегда видно когда ugcOptions показан -->
@@ -843,6 +845,7 @@ function onFormatChange() {
             : 'Чистое UGC без оформления';
 
         updateDecorVisibility();
+        updateRefRequired();
         return;
     }
 
@@ -861,6 +864,18 @@ function onFootageTextType() {
     saveScenarioData();
     renderScenarios();
     restoreScenarioData();
+}
+
+function updateRefRequired() {
+    const fmt = document.getElementById('format').value;
+    const isUGC = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(fmt);
+    if (!isUGC) return;
+    const repeatChar = document.getElementById('repeatCharacter').checked;
+    const changeType = document.querySelector('input[name="changeType"]:checked');
+    const isAllNew = changeType && changeType.value === 'всё новое: разные персонажи в разных локациях';
+    const required = repeatChar || (changeType && !isAllNew);
+    const marker = document.getElementById('refRequired');
+    if (marker) marker.style.display = required ? 'inline' : 'none';
 }
 
 function onRepeatChange() {
@@ -883,6 +898,7 @@ function onRepeatChange() {
         });
     }
     updateDecorVisibility();
+    updateRefRequired();
 }
 
 // ─── Scenario rendering ───────────────────────────────────────────────────────
@@ -1026,7 +1042,7 @@ function renderScenarios() {
                         oninput="checkCharCount(this, 'counter_${i}')"
                         ${isRu ? 'disabled style="opacity:.4"' : ''}
                     ></textarea>
-                    <span class="char-counter" id="counter_${i}">0 / ${MAX_CHARS}</span>
+                    <span class="char-counter" id="counter_${i}">${(()=>{ const f=document.getElementById('format').value; return ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(f) ? '0 / '+MAX_CHARS : '0'; })()}</span>
                 </div>
             </div>
         `;
@@ -1125,6 +1141,17 @@ function generateBrief() {
         }
     }
 
+    // Validate ref required
+    if (isUGC) {
+        const changeType = document.querySelector('input[name="changeType"]:checked');
+        const isAllNew = changeType && changeType.value === 'всё новое: разные персонажи в разных локациях';
+        const refRequired = repeatChar || (changeType && !isAllNew);
+        const refVal = document.getElementById('ref_link').value.trim();
+        if (refRequired && !refVal) {
+            showError('Укажите референс'); return;
+        }
+    }
+
     // Footage validation
     if (isFootage) {
         const theme   = document.getElementById('footage_theme').value.trim();
@@ -1190,7 +1217,7 @@ function generateBrief() {
     const reference = document.getElementById('ref_link').value.trim();
     const buildPersonBlock = () => {
         if (repeatChar) {
-            return 'Возраст: Так же как в рефе\nПол: Так же как в рефе\nВнешность: Так же как в рефе\nОписание сцены: Так же как в рефе';
+            return 'Возраст: Как в рефе\nПол: Как в рефе\nВнешность: Как в рефе\nОписание сцены: Как в рефе';
         }
         let pb = `Возраст: ${age}\nПол: ${gender}\nВнешность: ${appearance}`;
         if (scene) pb += `\n\n${scene}`;
@@ -1204,7 +1231,7 @@ function generateBrief() {
     if (isUGC) {
         lines.push(`Персонаж: ${changeNote}`);
     }
-    if (context)   lines.push(`Контекст: ${context}`);
+    if (context)   lines.push(`Комментарий: ${context}`);
     if (reference) lines.push(`Референс: ${reference}`);
     if (isUGC && ugcTextNote) {
         lines.push('');
