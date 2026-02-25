@@ -392,7 +392,7 @@
         </div>
 
         <div class="form-group" style="margin-top:12px">
-            <label>Комментарий</label>
+            <label>Контекст</label>
             <input type="text" id="context" placeholder="Этот крео хорошо себя показал, мысли, идеи, комментарии, уточнения...">
         </div>
 
@@ -643,6 +643,7 @@
 <script>
 const MAX_CHARS = 420;
 let scenarioCount = 1;
+let scenarioData = {}; // persists values across re-renders
 let selectedLangCode = 'EN';
 let selectedLangName = 'English';
 
@@ -857,7 +858,9 @@ function onFormatChange() {
 }
 
 function onFootageTextType() {
+    saveScenarioData();
     renderScenarios();
+    restoreScenarioData();
 }
 
 function onRepeatChange() {
@@ -883,11 +886,60 @@ function onRepeatChange() {
 }
 
 // ─── Scenario rendering ───────────────────────────────────────────────────────
+function saveScenarioData() {
+    for (let i = 1; i <= 6; i++) {
+        const ru = document.getElementById(`scenario_ru_${i}`);
+        const tr = document.getElementById(`scenario_tr_${i}`);
+        if (!scenarioData[i]) scenarioData[i] = { ru: '', tr: '', plashki: [] };
+        if (ru) scenarioData[i].ru = ru.value;
+        if (tr) scenarioData[i].tr = tr.value;
+        // Save плашки
+        const pc = document.getElementById(`plashki_${i}`);
+        if (pc) {
+            scenarioData[i].plashki = Array.from(pc.querySelectorAll('input')).map(el => el.value);
+        }
+    }
+}
+
+function restoreScenarioData() {
+    for (let i = 1; i <= scenarioCount; i++) {
+        const d = scenarioData[i];
+        if (!d) continue;
+        const ru = document.getElementById(`scenario_ru_${i}`);
+        const tr = document.getElementById(`scenario_tr_${i}`);
+        if (ru && d.ru) ru.value = d.ru;
+        if (tr && d.tr) {
+            tr.value = d.tr;
+            checkCharCount(tr, `counter_${i}`);
+        }
+        // Restore плашки
+        const pc = document.getElementById(`plashki_${i}`);
+        if (pc && d.plashki && d.plashki.length > 0) {
+            // Clear default first row, fill from saved
+            pc.innerHTML = '';
+            d.plashki.forEach((val, idx) => {
+                const row = document.createElement('div');
+                row.className = 'plashka-row';
+                row.innerHTML = `
+                    <input type="text" placeholder="Текст плашки ${idx+1}..." value="${val.replace(/"/g,'&quot;')}">
+                    <button class="plashka-remove" onclick="this.parentElement.remove()" title="Удалить">×</button>
+                `;
+                pc.appendChild(row);
+            });
+            if (d.plashki.length === 0) {
+                addPlashka(i);
+            }
+        }
+    }
+}
+
 function setScenarioCount(n, btn) {
+    saveScenarioData();
     document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     scenarioCount = n;
     renderScenarios();
+    restoreScenarioData();
 }
 
 
@@ -1035,7 +1087,9 @@ function updateDecorVisibility() {
 }
 
 function onUgcTextType() {
+    saveScenarioData();
     renderScenarios();
+    restoreScenarioData();
 }
 
 function generateBrief() {
@@ -1213,9 +1267,8 @@ function generateBrief() {
             // Collect плашки for this scenario
             const plashkiVals = getPlashkiValues(i);
             if (plashkiVals.length > 0) {
-                plashkiVals.forEach(p => lines.push(`Текст плашки: ${p}`));
-            } else if (ugcCapText) {
-                lines.push(`Текст плашки: ${ugcCapText}`);
+                lines.push('Текст плашки:');
+                plashkiVals.forEach(p => lines.push(p));
             }
         }
     }
@@ -1230,6 +1283,7 @@ function generateBrief() {
 // ─── Clear ────────────────────────────────────────────────────────────────────
 function clearForm() {
     hideError();
+    scenarioData = {};
     document.querySelectorAll('#generator input:not([type="radio"]):not([type="checkbox"]), #generator select, #generator textarea:not(#resultText)').forEach(el => {
         if (el.type === 'number') el.value = '0';
         else el.value = '';
