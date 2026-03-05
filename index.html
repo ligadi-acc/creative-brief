@@ -198,6 +198,30 @@
             color: #7fc0f5;
         }
 
+        /* Девиация */
+        .deviation-block { margin-top: 8px; }
+        .deviation-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+        .deviation-btns { display: flex; gap: 6px; }
+        .dev-btn {
+            flex: 1; padding: 7px 4px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5);
+            font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px;
+            text-align: center; transition: all .15s;
+        }
+        .dev-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+        .dev-btn.active-strict { background: rgba(235,87,87,0.15); border-color: rgba(235,87,87,0.5); color: #eb5757; }
+        .dev-btn.active-medium { background: rgba(255,165,0,0.12); border-color: rgba(255,165,0,0.45); color: #ffa500; }
+        .dev-btn.active-free   { background: rgba(39,174,96,0.12); border-color: rgba(39,174,96,0.45); color: #27ae60; }
+        /* Гендер сценария */
+        .scenario-gender { display: flex; gap: 6px; margin-bottom: 10px; align-items: center; }
+        .scenario-gender-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-right: 4px; }
+        .gender-btn {
+            padding: 4px 12px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.45);
+            font-size: 12px; cursor: pointer; transition: all .15s;
+        }
+        .gender-btn:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); }
+        .gender-btn.active { background: rgba(35,131,226,0.15); border-color: rgba(35,131,226,0.5); color: #3b9ede; }
         /* Плашки */
         .plashki-block {
             background: rgba(255,255,255,0.035);
@@ -436,7 +460,16 @@
             <!-- Референс и Комментарий — прямо под блоком персонажа -->
             <div class="form-group" style="margin-top:10px" id="refFieldRow">
                 <label>Референс <span id="refRequired" class="required" style="display:none">*</span></label>
-                <input type="text" id="ref_link" placeholder="Ссылка на крео, описание стиля, похожий пример...">
+                <input type="text" id="ref_link" placeholder="Ссылка на крео, описание стиля, похожий пример..." oninput="onRefInput()">
+            </div>
+            <div class="deviation-block" id="deviationBlock" style="display:none">
+                <div class="deviation-label">Степень изменения</div>
+                <div class="deviation-btns">
+                    <button class="dev-btn" id="dev-strict" onclick="setDeviation('STRICT')">STRICT</button>
+                    <button class="dev-btn" id="dev-medium" onclick="setDeviation('MEDIUM')">MEDIUM</button>
+                    <button class="dev-btn" id="dev-free"   onclick="setDeviation('FREE')">FREE</button>
+                </div>
+                <div id="deviationHint" style="display:none; margin-top:6px; padding:6px 10px; background:rgba(255,255,255,0.03); border-left:2px solid rgba(255,255,255,0.12); border-radius:0 4px 4px 0; font-size:11px; color:rgba(255,255,255,0.4); line-height:1.5;"></div>
             </div>
             <div class="form-group">
                 <label>Комментарий</label>
@@ -518,6 +551,14 @@
                 </select>
             </div>
 
+        </div>
+
+        <div class="form-group">
+            <label>Дополнительные требования</label>
+            <textarea id="additional_req" rows="4" placeholder="Non-negotiables: что нельзя менять ни при каких условиях (цвет бренда, логотип, CTA-фраза...)
+Локальные нюансы: специфика гео (нельзя пикапы в Польше, хиджаб в МА...)
+Гендерный сплит: если нужны оба пола — укажи точные цифры (5M / 5F)
+Прочие ограничения и пожелания..."></textarea>
         </div>
 
         <div class="divider"></div>
@@ -646,6 +687,10 @@
 const MAX_CHARS = 420;
 let scenarioCount = 1;
 let scenarioData = {}; // persists values across re-renders
+let selectedDeviation = '';
+const GENDERED_LANGS = new Set(['RU','ES','IT','FR','PT','PL','DE','AR','HE','UK','CS','SK','HR','SR','BG','RO','HU','EL','TR_NO','LV','LT']);
+// Languages where grammatical gender matters for scenarios
+const GENDER_LANG_CODES = ['RU','ES','IT','FR','PT','PL','DE','AR','HE','UK','CS','SK','HR','SR','BG','RO','EL','LV','LT'];
 let selectedLangCode = 'EN';
 let selectedLangName = 'English';
 
@@ -866,6 +911,48 @@ function onFootageTextType() {
     restoreScenarioData();
 }
 
+function setScenarioGender(idx, val) {
+    if (!scenarioData[idx]) scenarioData[idx] = { ru: '', tr: '', plashki: [], gender: 'N' };
+    scenarioData[idx].gender = scenarioData[idx].gender === val ? 'N' : val; // toggle back to Нейтр, not empty
+    const labels = { M: 'gb_m', F: 'gb_f', N: 'gb_n' };
+    ['M','F','N'].forEach(v => {
+        const btn = document.getElementById(`${labels[v]}_${idx}`);
+        if (btn) btn.classList.toggle('active', scenarioData[idx].gender === v);
+    });
+}
+
+function onRefInput() {
+    const val = document.getElementById('ref_link').value.trim();
+    const block = document.getElementById('deviationBlock');
+    if (block) block.style.display = val ? 'block' : 'none';
+    if (!val) { selectedDeviation = ''; updateDeviationUI(); const _dh = document.getElementById('deviationHint'); if(_dh){_dh.style.display='none';_dh.textContent='';} }
+}
+
+function setDeviation(val) {
+    selectedDeviation = selectedDeviation === val ? '' : val;
+    updateDeviationUI();
+    const hints = {
+        STRICT: 'Копируем максимально точно — ничего не меняем.',
+        MEDIUM: 'Берём костяк, детали можно адаптировать.',
+        FREE:   'Главное передать идею, остальное на усмотрение.',
+    };
+    const hintEl = document.getElementById('deviationHint');
+    if (hintEl) {
+        hintEl.textContent = selectedDeviation ? hints[selectedDeviation] : '';
+        hintEl.style.display = selectedDeviation ? 'block' : 'none';
+    }
+}
+
+function updateDeviationUI() {
+    ['STRICT','MEDIUM','FREE'].forEach(v => {
+        const btn = document.getElementById('dev-' + v.toLowerCase());
+        if (btn) {
+            btn.classList.remove('active-strict','active-medium','active-free');
+            if (selectedDeviation === v) btn.classList.add('active-' + v.toLowerCase());
+        }
+    });
+}
+
 function updateRefRequired() {
     const fmt = document.getElementById('format').value;
     const isUGC = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(fmt);
@@ -906,7 +993,7 @@ function saveScenarioData() {
     for (let i = 1; i <= 6; i++) {
         const ru = document.getElementById(`scenario_ru_${i}`);
         const tr = document.getElementById(`scenario_tr_${i}`);
-        if (!scenarioData[i]) scenarioData[i] = { ru: '', tr: '', plashki: [] };
+        if (!scenarioData[i]) scenarioData[i] = { ru: '', tr: '', plashki: [], gender: 'N' };
         if (ru) scenarioData[i].ru = ru.value;
         if (tr) scenarioData[i].tr = tr.value;
         // Save плашки
@@ -946,6 +1033,12 @@ function restoreScenarioData() {
                 addPlashka(i);
             }
         }
+        // Restore gender (N is default so always restore)
+        const gval = d.gender || 'N';
+        ['M','F','N'].forEach(v => {
+            const btn = document.getElementById(`gb_${v.toLowerCase()}_${i}`);
+            if (btn) btn.classList.toggle('active', gval === v);
+        });
     }
 }
 
@@ -1015,6 +1108,18 @@ function renderScenarios() {
         const block = document.createElement('div');
         block.className = 'scenario-block';
 
+        const isGendered = GENDER_LANG_CODES.includes(selectedLangCode);
+        const genderHtml = isGendered ? `
+            <div class="scenario-gender">
+                <span class="scenario-gender-label">Гендер <span class="required">*</span>:</span>
+                <button class="gender-btn${!(scenarioData[i]&&scenarioData[i].gender)||scenarioData[i].gender==='M'?scenarioData[i]&&scenarioData[i].gender==='M'?' active':''  :''}" id="gb_m_${i}" onclick="setScenarioGender(${i},'M')">М</button>
+                <button class="gender-btn${scenarioData[i]&&scenarioData[i].gender==='F'?' active':''}" id="gb_f_${i}" onclick="setScenarioGender(${i},'F')">Ж</button>
+                <button class="gender-btn${!scenarioData[i]||!scenarioData[i].gender||scenarioData[i].gender==='N'?' active':''}" id="gb_n_${i}" onclick="setScenarioGender(${i},'N')">Нейтр</button>
+            </div>
+            <div style="margin-bottom:10px; padding:6px 10px; background:rgba(255,255,255,0.03); border-left:2px solid rgba(255,255,255,0.12); border-radius:0 4px 4px 0; font-size:11px; color:rgba(255,255,255,0.35); line-height:1.5;">
+                ⚠️ Для этого языка важен гендер — для М и Ж пишутся отдельные сценарии. При необходимости создай отдельный сценарий для другого пола.
+            </div>` : '';
+
         const plashkiHtml = showPlashki ? `
             <div class="plashki-block">
                 <div class="plashki-title">Текст плашки</div>
@@ -1029,6 +1134,7 @@ function renderScenarios() {
 
         block.innerHTML = `
             ${scenarioCount > 1 ? `<div class="scenario-block-title">Сценарий ${i}</div>` : ''}
+            ${genderHtml}
             ${plashkiHtml}
             <div class="form-group" style="margin-bottom:8px">
                 <label>${ruLabel}: (русский)</label>
@@ -1233,6 +1339,16 @@ function generateBrief() {
     }
     if (context)   lines.push(`Комментарий: ${context}`);
     if (reference) lines.push(`Референс: ${reference}`);
+    if (selectedDeviation) {
+        const devMap = {
+            STRICT: 'STRICT — копируем максимально точно, ничего не меняем',
+            MEDIUM: 'MEDIUM — берём костяк, детали можно адаптировать',
+            FREE:   'FREE — главное передать идею, остальное на усмотрение',
+        };
+        lines.push(`Степень изменения: ${devMap[selectedDeviation]}`);
+    }
+    const additionalReq = document.getElementById('additional_req').value.trim();
+    if (additionalReq) { lines.push(''); lines.push(`Дополнительные требования:`); lines.push(additionalReq); }
     if (isUGC && ugcTextNote) {
         lines.push('');
         lines.push(`Оформление: ${ugcTextNote}`);
@@ -1271,6 +1387,22 @@ function generateBrief() {
         if (decor) { lines.push(''); lines.push(decor); }
     }
 
+    // Validate gender for gendered languages
+    if (GENDER_LANG_CODES.includes(langCode)) {
+        for (let i = 1; i <= scenarioCount; i++) {
+            const ruEl = document.getElementById(`scenario_ru_${i}`);
+            const trEl = document.getElementById(`scenario_tr_${i}`);
+            const hasContent = (ruEl && ruEl.value.trim()) || (trEl && trEl.value.trim());
+            if (hasContent) {
+                const sg = (scenarioData[i] && scenarioData[i].gender) || 'N';
+                if (!sg) {  // always valid since default is N
+                    showError(`Сценарий ${i}: укажите гендер (М / Ж / Нейтр) — язык зависит от рода`);
+                    return;
+                }
+            }
+        }
+    }
+
     // Scenarios
     let hasScenarios = false;
     for (let i = 1; i <= scenarioCount; i++) {
@@ -1287,6 +1419,9 @@ function generateBrief() {
             const ruLabel = scenarioCount > 1 ? `RU${i}` : 'RU';
             const trLabel = scenarioCount > 1 ? `${langCode}${i}` : langCode;
             lines.push('');
+            const sg = scenarioData[i] && scenarioData[i].gender;
+            const genderNames = { M: 'Мужской', F: 'Женский', N: 'Нейтральный' };
+            if (sg) lines.push(`Гендер сценария: ${genderNames[sg]}`);
             lines.push(`${ruLabel}:`);
             lines.push(ruVal);
             lines.push(`${trLabel}:`);
@@ -1311,6 +1446,9 @@ function generateBrief() {
 function clearForm() {
     hideError();
     scenarioData = {};
+    selectedDeviation = ''; updateDeviationUI();
+    const addReq = document.getElementById('additional_req'); if (addReq) addReq.value = '';
+    const devBlock = document.getElementById('deviationBlock'); if (devBlock) devBlock.style.display = 'none';
     document.querySelectorAll('#generator input:not([type="radio"]):not([type="checkbox"]), #generator select, #generator textarea:not(#resultText)').forEach(el => {
         if (el.type === 'number') el.value = '0';
         else el.value = '';
