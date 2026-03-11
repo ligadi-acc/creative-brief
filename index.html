@@ -217,6 +217,18 @@
         .btn-discard { padding: 5px 10px; background: none; border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: rgba(255,255,255,0.35); font-size: 11px; cursor: pointer; }
         .btn-discard:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.6); }
 
+        /* Пресеты версий */
+        .versions-wrap { display: flex; flex-direction: column; gap: 5px; }
+        .preset-btns { display: flex; gap: 4px; flex-wrap: wrap; }
+        .preset-btn {
+            padding: 2px 7px; font-size: 11px; border-radius: 4px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.4);
+            cursor: pointer; transition: all .12s; font-family: inherit;
+        }
+        .preset-btn:hover { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.85); border-color: rgba(255,255,255,0.25); }
+        .preset-btn.active { background: rgba(35,131,226,0.15); border-color: rgba(35,131,226,0.5); color: #3b9ede; }
+
         /* Что меняем — чекбоксы */
         .change-checkboxes { margin-top: 4px; }
         .change-checkbox-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer; }
@@ -505,11 +517,31 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Версий 9:16</label>
-                <input type="number" id="versions916" value="0" min="0" max="10" oninput="onVersionsChange()">
+                <div class="versions-wrap">
+                    <input type="number" id="versions916" value="0" min="0" max="99" oninput="onVersionsChange(); updatePresetBtns('916')">
+                    <div class="preset-btns" id="presets916">
+                        <button class="preset-btn" onclick="setVersions('916',0)">0</button>
+                        <button class="preset-btn" onclick="setVersions('916',3)">3</button>
+                        <button class="preset-btn" onclick="setVersions('916',5)">5</button>
+                        <button class="preset-btn" onclick="setVersions('916',6)">6</button>
+                        <button class="preset-btn" onclick="setVersions('916',8)">8</button>
+                        <button class="preset-btn" onclick="setVersions('916',10)">10</button>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label>Версий 1:1</label>
-                <input type="number" id="versions11" value="0" min="0" max="10" oninput="onVersionsChange()">
+                <div class="versions-wrap">
+                    <input type="number" id="versions11" value="0" min="0" max="99" oninput="onVersionsChange(); updatePresetBtns('11')">
+                    <div class="preset-btns" id="presets11">
+                        <button class="preset-btn" onclick="setVersions('11',0)">0</button>
+                        <button class="preset-btn" onclick="setVersions('11',3)">3</button>
+                        <button class="preset-btn" onclick="setVersions('11',5)">5</button>
+                        <button class="preset-btn" onclick="setVersions('11',6)">6</button>
+                        <button class="preset-btn" onclick="setVersions('11',8)">8</button>
+                        <button class="preset-btn" onclick="setVersions('11',10)">10</button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1033,6 +1065,21 @@ function setScenarioGender(idx, val) {
     });
 }
 
+
+function setVersions(field, val) {
+    const el = document.getElementById('versions' + field);
+    if (!el) return;
+    el.value = val;
+    updatePresetBtns(field);
+    onVersionsChange();
+}
+
+function updatePresetBtns(field) {
+    const val = parseInt(document.getElementById('versions' + field).value);
+    document.querySelectorAll(`#presets${field} .preset-btn`).forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.textContent) === val);
+    });
+}
 
 function getTotalVersions() {
     const v916 = parseInt(document.getElementById('versions916').value) || 0;
