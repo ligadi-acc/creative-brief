@@ -198,12 +198,48 @@
             color: #7fc0f5;
         }
 
+        /* Restore banner */
+        #restoreBanner {
+            display: none;
+            background: rgba(35,131,226,0.12);
+            border: 1px solid rgba(35,131,226,0.35);
+            border-radius: 7px;
+            padding: 10px 14px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.75);
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        }
+        #restoreBanner.hidden { display: none !important; }
+        .restore-btns { display: flex; gap: 8px; flex-shrink: 0; }
+        .btn-restore { padding: 5px 12px; background: rgba(35,131,226,0.25); border: 1px solid rgba(35,131,226,0.5); border-radius: 5px; color: #5ab0ff; font-size: 11px; font-weight: 600; cursor: pointer; }
+        .btn-restore:hover { background: rgba(35,131,226,0.4); }
+        .btn-discard { padding: 5px 10px; background: none; border: 1px solid rgba(255,255,255,0.1); border-radius: 5px; color: rgba(255,255,255,0.35); font-size: 11px; cursor: pointer; }
+        .btn-discard:hover { border-color: rgba(255,255,255,0.25); color: rgba(255,255,255,0.6); }
+
+        /* Что меняем — чекбоксы */
+        .change-checkboxes { margin-top: 4px; }
+        .change-checkbox-item { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; cursor: pointer; }
+        .change-checkbox-item input[type="checkbox"] { width: 15px; height: 15px; accent-color: #2383e2; cursor: pointer; flex-shrink: 0; }
+        .change-checkbox-item label { font-size: 13px; color: rgba(255,255,255,0.75); cursor: pointer; }
+        .all-new-row { margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+
+        /* Референсы */
+        .ref-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 10px 12px; margin-bottom: 8px; }
+        .ref-block-title { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; }
+        .ref-remove { background: none; border: none; color: rgba(235,87,87,0.6); cursor: pointer; font-size: 16px; padding: 0 2px; line-height: 1; }
+        .ref-remove:hover { color: #eb5757; }
+        .btn-add-ref { font-size: 11px; padding: 5px 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; color: rgba(255,255,255,0.55); cursor: pointer; margin-top: 4px; }
+        .btn-add-ref:hover { background: rgba(255,255,255,0.09); color: #fff; }
+
         /* Девиация */
         .deviation-block { margin-top: 8px; }
         .deviation-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
-        .deviation-btns { display: flex; gap: 6px; }
+        .deviation-btns { display: flex; flex-direction: column; gap: 5px; }
+        .dev-row { display: flex; align-items: center; gap: 10px; }
         .dev-btn {
-            flex: 1; padding: 7px 4px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.1);
+            width: 80px; flex-shrink: 0; padding: 6px 4px; border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.1);
             background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.5);
             font-size: 11px; font-weight: 700; cursor: pointer; letter-spacing: 0.5px;
             text-align: center; transition: all .15s;
@@ -212,6 +248,53 @@
         .dev-btn.active-strict { background: rgba(235,87,87,0.15); border-color: rgba(235,87,87,0.5); color: #eb5757; }
         .dev-btn.active-medium { background: rgba(255,165,0,0.12); border-color: rgba(255,165,0,0.45); color: #ffa500; }
         .dev-btn.active-free   { background: rgba(39,174,96,0.12); border-color: rgba(39,174,96,0.45); color: #27ae60; }
+        .dev-desc { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.4; transition: color .15s; }
+        .dev-row:has(.active-strict) .dev-desc { color: rgba(235,87,87,0.7); }
+        .dev-row:has(.active-medium) .dev-desc { color: rgba(255,165,0,0.7); }
+        .dev-row:has(.active-free)   .dev-desc { color: rgba(39,174,96,0.7); }
+        /* Гендерный сплит */
+        .split-track-wrap { position: relative; display: flex; justify-content: center; padding: 8px 0; }
+        #split_slider {
+            -webkit-appearance: none; appearance: none;
+            width: 50%; height: 8px;
+            border-radius: 4px; outline: none; cursor: pointer;
+            background: linear-gradient(to right, rgba(59,158,222,0.5) 50%, rgba(236,100,140,0.4) 50%);
+            transition: background 0.15s;
+        }
+        #split_slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 8px; height: 28px;
+            background: #fff;
+            border-radius: 3px; cursor: pointer;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.5);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+        #split_slider::-webkit-slider-thumb:hover {
+            transform: scaleY(1.15);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.7);
+        }
+        #split_slider::-moz-range-thumb {
+            width: 8px; height: 28px;
+            background: #fff; border-radius: 3px;
+            cursor: pointer; border: none;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.5);
+        }
+        #split_slider::-webkit-slider-runnable-track { border-radius: 4px; }
+        .split-labels { display: flex; justify-content: space-between; margin-top: 4px; padding: 0 25%; }
+        .split-label-m { font-size: 12px; color: rgba(100,180,255,0.8); font-weight: 500; }
+        .split-label-f { font-size: 12px; color: rgba(255,130,170,0.8); font-weight: 500; }
+        #genderSplitRow input[type="number"] {
+            background: rgba(255,255,255,0.055);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 5px; color: rgba(255,255,255,0.85);
+            padding: 6px 8px; font-size: 13px; font-family: inherit;
+            outline: none; text-align: center;
+        }
+        #genderSplitRow input[type="number"]:focus {
+            border-color: rgba(35,131,226,0.7);
+        }
+        #genderSplitRow input[type="number"]::-webkit-inner-spin-button { opacity: 0.4; }
+
         /* Гендер сценария */
         .scenario-gender { display: flex; gap: 6px; margin-bottom: 10px; align-items: center; }
         .scenario-gender-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-right: 4px; }
@@ -422,11 +505,11 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Версий 9:16</label>
-                <input type="number" id="versions916" value="0" min="0" max="10">
+                <input type="number" id="versions916" value="0" min="0" max="10" oninput="onVersionsChange()">
             </div>
             <div class="form-group">
                 <label>Версий 1:1</label>
-                <input type="number" id="versions11" value="0" min="0" max="10">
+                <input type="number" id="versions11" value="0" min="0" max="10" oninput="onVersionsChange()">
             </div>
         </div>
 
@@ -439,37 +522,50 @@
 
             <div class="change-options" id="changeOptions">
                 <div class="change-options-label">Что меняем:</div>
-                <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c4" value="всё новое: разные персонажи в разных локациях" onchange="updateRefRequired()">
-                    <label for="c4">Всё новое: разные персонажи в разных локациях</label>
-                </div>
-                <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c1" value="меняем только персонажа" onchange="updateRefRequired()">
-                    <label for="c1">Меняем только персонажа</label>
-                </div>
-                <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c2" value="меняем только одежду персонажа" onchange="updateRefRequired()">
-                    <label for="c2">Меняем только одежду персонажа</label>
-                </div>
-                <div class="change-option-item">
-                    <input type="radio" name="changeType" id="c3" value="меняем локацию/фон персонажа" onchange="updateRefRequired()">
-                    <label for="c3">Меняем локацию/фон персонажа</label>
+                <div class="change-checkboxes">
+                    <div class="change-checkbox-item all-new-row">
+                        <input type="checkbox" id="c_allnew" onchange="onAllNewChange()">
+                        <label for="c_allnew">Всё новое: разные персонажи в разных локациях</label>
+                    </div>
+                    <div id="changeDetails">
+                        <div class="change-checkbox-item">
+                            <input type="checkbox" id="c_person" onchange="updateRefRequired()">
+                            <label for="c_person">Меняем персонажа</label>
+                        </div>
+                        <div class="change-checkbox-item">
+                            <input type="checkbox" id="c_clothes" onchange="updateRefRequired()" checked>
+                            <label for="c_clothes">Меняем одежду персонажа</label>
+                        </div>
+                        <div class="change-checkbox-item">
+                            <input type="checkbox" id="c_location" onchange="updateRefRequired()">
+                            <label for="c_location">Меняем локацию / фон</label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <!-- Референс и Комментарий — прямо под блоком персонажа -->
-            <div class="form-group" style="margin-top:10px" id="refFieldRow">
-                <label>Референс <span id="refRequired" class="required" style="display:none">*</span></label>
-                <input type="text" id="ref_link" placeholder="Ссылка на крео, описание стиля, похожий пример..." oninput="onRefInput()">
+            <div style="margin-top:10px" id="refFieldRow">
+                <div class="change-options-label">Референс <span id="refRequired" class="required" style="display:none">*</span></div>
+                <div id="refsContainer"></div>
+                <button class="btn-add-ref" onclick="addRef()">+ Добавить референс</button>
             </div>
             <div class="deviation-block" id="deviationBlock" style="display:none">
-                <div class="deviation-label">Степень изменения</div>
+                <div class="deviation-label">Степень вариативности <span class="required">*</span></div>
                 <div class="deviation-btns">
-                    <button class="dev-btn" id="dev-strict" onclick="setDeviation('STRICT')">STRICT</button>
-                    <button class="dev-btn" id="dev-medium" onclick="setDeviation('MEDIUM')">MEDIUM</button>
-                    <button class="dev-btn" id="dev-free"   onclick="setDeviation('FREE')">FREE</button>
+                    <div class="dev-row">
+                        <button class="dev-btn" id="dev-strict" onclick="setDeviation('STRICT')">STRICT</button>
+                        <span class="dev-desc">Копируем максимально точно — ничего не меняем</span>
+                    </div>
+                    <div class="dev-row">
+                        <button class="dev-btn" id="dev-medium" onclick="setDeviation('MEDIUM')">MEDIUM</button>
+                        <span class="dev-desc">Сохраняем структуру и ключевые моменты, детали можно менять</span>
+                    </div>
+                    <div class="dev-row">
+                        <button class="dev-btn" id="dev-free" onclick="setDeviation('FREE')">FREE</button>
+                        <span class="dev-desc">Главное передать идею, остальное на усмотрение</span>
+                    </div>
                 </div>
-                <div id="deviationHint" style="display:none; margin-top:6px; padding:6px 10px; background:rgba(255,255,255,0.03); border-left:2px solid rgba(255,255,255,0.12); border-radius:0 4px 4px 0; font-size:11px; color:rgba(255,255,255,0.4); line-height:1.5;"></div>
             </div>
             <div class="form-group">
                 <label>Комментарий</label>
@@ -505,13 +601,25 @@
             </div>
             <div class="form-group">
                 <label class="person-field-label">Пол <span class="required">*</span></label>
-                <select id="gender">
+                <select id="gender" onchange="onGenderChange()">
                     <option value="">Выберите...</option>
                     <option value="мужчины">Мужчины</option>
                     <option value="женщины">Женщины</option>
                     <option value="мужчины и женщины">Мужчины и женщины</option>
                 </select>
             </div>
+        </div>
+
+        <div id="genderSplitRow" style="display:none; margin-bottom:12px;">
+            <label style="font-size:11px; color:rgba(255,255,255,0.4); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:8px;">Гендерный сплит</label>
+            <div class="split-track-wrap">
+                <input type="range" id="split_slider" min="0" max="10" value="5" step="1" oninput="onSplitSlider()">
+            </div>
+            <div class="split-labels">
+                <span class="split-label-m">Мужчин: <b id="split_m_label">50%</b></span>
+                <span class="split-label-f">Женщин: <b id="split_f_label">50%</b></span>
+            </div>
+            <div id="splitHint" style="font-size:11px; margin-top:2px; text-align:center;"></div>
         </div>
 
         <div class="form-group">
@@ -576,6 +684,7 @@
                 <button class="count-btn" onclick="setScenarioCount(5, this)">5</button>
                 <button class="count-btn" onclick="setScenarioCount(6, this)">6</button>
             </div>
+            <div id="scenarioHint" style="margin-top:6px; font-size:11px; line-height:1.4; display:none;"></div>
         </div>
 
         <div id="scenariosContainer"></div>
@@ -687,7 +796,7 @@
 const MAX_CHARS = 420;
 let scenarioCount = 1;
 let scenarioData = {}; // persists values across re-renders
-let selectedDeviation = '';
+let selectedDeviation = 'MEDIUM';
 const GENDERED_LANGS = new Set(['RU','ES','IT','FR','PT','PL','DE','AR','HE','UK','CS','SK','HR','SR','BG','RO','HU','EL','TR_NO','LV','LT']);
 // Languages where grammatical gender matters for scenarios
 const GENDER_LANG_CODES = ['RU','ES','IT','FR','PT','PL','DE','AR','HE','UK','CS','SK','HR','SR','BG','RO','EL','LV','LT'];
@@ -891,6 +1000,9 @@ function onFormatChange() {
 
         updateDecorVisibility();
         updateRefRequired();
+        // Ensure at least one ref block is visible
+        const refsC = document.getElementById('refsContainer');
+        if (refsC && refsC.children.length === 0) addRef();
         return;
     }
 
@@ -921,26 +1033,200 @@ function setScenarioGender(idx, val) {
     });
 }
 
+
+function getTotalVersions() {
+    const v916 = parseInt(document.getElementById('versions916').value) || 0;
+    const v11  = parseInt(document.getElementById('versions11').value)  || 0;
+    return v916 + v11;
+}
+
+function getSplitCounts(total) {
+    const raw = parseInt(document.getElementById('split_slider') ? document.getElementById('split_slider').value : 5);
+    const pct = raw * 10; // 0-10 → 0-100%
+    const m = Math.round(total * pct / 100);
+    const f = total - m;
+    return { m, f, pct };
+}
+
+function onSplitSlider() {
+    const total = getTotalVersions();
+    const raw = parseInt(document.getElementById('split_slider').value);
+    const pct = raw * 10;
+    const lm = document.getElementById('split_m_label');
+    const lf = document.getElementById('split_f_label');
+    // Update gradient
+    const sl = document.getElementById('split_slider');
+    if (sl) sl.style.background = `linear-gradient(to right, rgba(59,158,222,${0.3+pct/200}) ${pct}%, rgba(236,100,140,${0.3+(100-pct)/200}) ${pct}%)`;
+    if (total > 0) {
+        const m = Math.round(total * pct / 100);
+        const f = total - m;
+        if (lm) lm.textContent = `${m}`;
+        if (lf) lf.textContent = `${f}`;
+    } else {
+        if (lm) lm.textContent = `${pct}%`;
+        if (lf) lf.textContent = `${100-pct}%`;
+    }
+    // Update scenario hint only (no recursive call)
+    const scenHint = document.getElementById('scenarioHint');
+    if (scenHint && total > 0) {
+        if (total % scenarioCount !== 0) {
+            const candidates = [1,2,3,4,5,6].filter(n => total % n === 0);
+            const hint = candidates.length > 0 ? `Рекомендуется: ${candidates.join(', ')}` : '';
+            scenHint.innerHTML = `<span style="color:rgba(255,165,0,0.8)">⚠ ${total} версий не делится на ${scenarioCount} сценари${scenarioCount===1?'й':'ев'}. ${hint}</span>`;
+            scenHint.style.display = 'block';
+        } else {
+            const perScene = total / scenarioCount;
+            scenHint.innerHTML = `<span style="color:rgba(255,255,255,0.3)">По ${perScene} версии на каждый сценарий</span>`;
+            scenHint.style.display = 'block';
+        }
+    }
+}
+
+function onVersionsChange() {
+    const total = getTotalVersions();
+    const gender = document.getElementById('gender') ? document.getElementById('gender').value : '';
+    const isSplit = gender === 'мужчины и женщины';
+    const splitHint = document.getElementById('splitHint');
+    const scenHint  = document.getElementById('scenarioHint');
+
+    // Update slider labels (inline to avoid circular call)
+    if (isSplit) {
+        const sl = document.getElementById('split_slider');
+        const lm = document.getElementById('split_m_label');
+        const lf = document.getElementById('split_f_label');
+        if (sl && lm && lf) {
+            const raw2 = parseInt(sl.value);
+            const pct2 = raw2 * 10;
+            if (total > 0) {
+                const m = Math.round(total * pct2 / 100);
+                const f = total - m;
+                lm.textContent = `Мужчин ${m}`;
+                lf.textContent = `Женщин ${f}`;
+            } else {
+                lm.textContent = `Мужчин ${pct2}%`;
+                lf.textContent = `Женщин ${100-pct2}%`;
+            }
+        }
+    }
+
+    // Split hint
+
+
+    // Scenario count hint
+    if (scenHint && total > 0) {
+        if (total % scenarioCount !== 0) {
+            const candidates = [1,2,3,4,5,6].filter(n => total % n === 0);
+            const hint = candidates.length > 0 ? `Рекомендуется: ${candidates.join(', ')}` : '';
+            scenHint.innerHTML = `<span style="color:rgba(255,165,0,0.8)">⚠ ${total} версий не делится на ${scenarioCount} сценари${scenarioCount===1?'й':'ев'}. ${hint}</span>`;
+            scenHint.style.display = 'block';
+        } else {
+            const perScene = total / scenarioCount;
+            scenHint.innerHTML = `<span style="color:rgba(255,255,255,0.3)">По ${perScene} версии на каждый сценарий</span>`;
+            scenHint.style.display = 'block';
+        }
+    } else if (scenHint) {
+        scenHint.style.display = total > 0 ? 'block' : 'none';
+    }
+}
+
+function onGenderChange() {
+    const val = document.getElementById('gender').value;
+    const splitRow = document.getElementById('genderSplitRow');
+    if (splitRow) splitRow.style.display = val === 'мужчины и женщины' ? 'block' : 'none';
+    // Re-render scenarios to update available gender buttons
+    saveScenarioData();
+    renderScenarios();
+    restoreScenarioData();
+    onVersionsChange();
+}
+
+function getAvailableGenders() {
+    const val = document.getElementById('gender') ? document.getElementById('gender').value : '';
+    if (val === 'мужчины') return ['M', 'N'];
+    if (val === 'женщины') return ['F', 'N'];
+    return ['M', 'F', 'N']; // мужчины и женщины or unset
+}
+
+function onAllNewChange() {
+    const allNew = document.getElementById('c_allnew').checked;
+    const details = document.getElementById('changeDetails');
+    if (details) details.style.display = allNew ? 'none' : '';
+    if (allNew) {
+        ['c_person','c_clothes','c_location'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.checked = false;
+        });
+    }
+    // Show/hide ref blocks depending on allNew
+    const refsC = document.getElementById('refsContainer');
+    if (refsC) refsC.style.display = allNew ? 'none' : '';
+    // Toggle required on "что берём" fields
+    document.querySelectorAll('[id^="ref_what_"]').forEach(el => {
+        const lbl = el.previousElementSibling;
+        if (lbl) {
+            const req = lbl.querySelector('.required');
+            if (req) req.style.display = allNew ? 'none' : 'inline';
+        }
+        el.required = !allNew;
+    });
+    updateRefRequired();
+}
+
+let refCount = 0;
+
+function addRef(linkVal, whatVal) {
+    refCount++;
+    const n = refCount;
+    const container = document.getElementById('refsContainer');
+    const block = document.createElement('div');
+    block.className = 'ref-block';
+    block.id = `ref_block_${n}`;
+    block.innerHTML = `
+        <div class="ref-block-title">
+            <span>Референс ${refCount > 1 ? n : ''}</span>
+            ${n > 1 ? `<button class="ref-remove" onclick="removeRef(${n})" title="Удалить">×</button>` : ''}
+        </div>
+        <div class="form-group" style="margin-bottom:6px">
+            <input type="text" id="ref_link_${n}" placeholder="Ссылка на референс..." oninput="onRefInput()" value="${(linkVal||'').replace(/"/g,'&quot;')}">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+            <label style="font-size:11px; color:rgba(255,255,255,0.4);">Что берём <span class="required">*</span></label>
+            <input type="text" id="ref_what_${n}" placeholder="Всё / только персонажа / фон и вайб / ракурс и свет / идею..." value="${(whatVal||'').replace(/"/g,'&quot;')}">
+        </div>
+    `;
+    container.appendChild(block);
+    onRefInput();
+}
+
+function removeRef(n) {
+    const block = document.getElementById(`ref_block_${n}`);
+    if (block) block.remove();
+    onRefInput();
+    updateRefRequired();
+}
+
+function getRefsData() {
+    const refs = [];
+    document.querySelectorAll('#refsContainer .ref-block').forEach(block => {
+        const id = block.id.replace('ref_block_','');
+        const link = document.getElementById(`ref_link_${id}`);
+        const what = document.getElementById(`ref_what_${id}`);
+        refs.push({ link: link ? link.value.trim() : '', what: what ? what.value.trim() : '' });
+    });
+    return refs;
+}
+
 function onRefInput() {
-    const val = document.getElementById('ref_link').value.trim();
+    const refs = getRefsData();
+    const hasAnyLink = refs.some(r => r.link);
     const block = document.getElementById('deviationBlock');
-    if (block) block.style.display = val ? 'block' : 'none';
-    if (!val) { selectedDeviation = ''; updateDeviationUI(); const _dh = document.getElementById('deviationHint'); if(_dh){_dh.style.display='none';_dh.textContent='';} }
+    if (block) block.style.display = hasAnyLink ? 'block' : 'none';
+    if (!hasAnyLink) { selectedDeviation = ''; updateDeviationUI(); }
 }
 
 function setDeviation(val) {
     selectedDeviation = selectedDeviation === val ? '' : val;
     updateDeviationUI();
-    const hints = {
-        STRICT: 'Копируем максимально точно — ничего не меняем.',
-        MEDIUM: 'Берём костяк, детали можно адаптировать.',
-        FREE:   'Главное передать идею, остальное на усмотрение.',
-    };
-    const hintEl = document.getElementById('deviationHint');
-    if (hintEl) {
-        hintEl.textContent = selectedDeviation ? hints[selectedDeviation] : '';
-        hintEl.style.display = selectedDeviation ? 'block' : 'none';
-    }
 }
 
 function updateDeviationUI() {
@@ -957,10 +1243,13 @@ function updateRefRequired() {
     const fmt = document.getElementById('format').value;
     const isUGC = ['UGC','UGC+decor','Mix','Cutout','DepthFX','SplitOffer','SplitZalip'].includes(fmt);
     if (!isUGC) return;
-    const repeatChar = document.getElementById('repeatCharacter').checked;
-    const changeType = document.querySelector('input[name="changeType"]:checked');
-    const isAllNew = changeType && changeType.value === 'всё новое: разные персонажи в разных локациях';
-    const required = repeatChar || (changeType && !isAllNew);
+    const repeatChar = document.getElementById('repeatCharacter') && document.getElementById('repeatCharacter').checked;
+    const allNew = document.getElementById('c_allnew') && document.getElementById('c_allnew').checked;
+    const anyDetail = ['c_person','c_clothes','c_location'].some(id => {
+        const el = document.getElementById(id); return el && el.checked;
+    });
+    // Required when: repeatChar, or any detail checkbox, but NOT when allNew only
+    const required = repeatChar || anyDetail;
     const marker = document.getElementById('refRequired');
     if (marker) marker.style.display = required ? 'inline' : 'none';
 }
@@ -1044,6 +1333,7 @@ function restoreScenarioData() {
 
 function setScenarioCount(n, btn) {
     saveScenarioData();
+    setTimeout(onVersionsChange, 0);
     document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     scenarioCount = n;
@@ -1108,13 +1398,19 @@ function renderScenarios() {
         const block = document.createElement('div');
         block.className = 'scenario-block';
 
-        const isGendered = GENDER_LANG_CODES.includes(selectedLangCode);
+        const isGendered = GENDER_LANG_CODES.includes(selectedLangCode) ||
+            (['мужчины','женщины','мужчины и женщины'].includes(
+                document.getElementById('gender') ? document.getElementById('gender').value : ''
+            ));
+        const availGenders = getAvailableGenders();
+        const curGender = (scenarioData[i] && scenarioData[i].gender) || 'N';
+        const btnM = availGenders.includes('M') ? `<button class="gender-btn${curGender==='M'?' active':''}" id="gb_m_${i}" onclick="setScenarioGender(${i},'M')">М</button>` : '';
+        const btnF = availGenders.includes('F') ? `<button class="gender-btn${curGender==='F'?' active':''}" id="gb_f_${i}" onclick="setScenarioGender(${i},'F')">Ж</button>` : '';
+        const btnN = `<button class="gender-btn${curGender==='N'?' active':''}" id="gb_n_${i}" onclick="setScenarioGender(${i},'N')">Нейтр</button>`;
         const genderHtml = isGendered ? `
             <div class="scenario-gender">
                 <span class="scenario-gender-label">Гендер <span class="required">*</span>:</span>
-                <button class="gender-btn${!(scenarioData[i]&&scenarioData[i].gender)||scenarioData[i].gender==='M'?scenarioData[i]&&scenarioData[i].gender==='M'?' active':''  :''}" id="gb_m_${i}" onclick="setScenarioGender(${i},'M')">М</button>
-                <button class="gender-btn${scenarioData[i]&&scenarioData[i].gender==='F'?' active':''}" id="gb_f_${i}" onclick="setScenarioGender(${i},'F')">Ж</button>
-                <button class="gender-btn${!scenarioData[i]||!scenarioData[i].gender||scenarioData[i].gender==='N'?' active':''}" id="gb_n_${i}" onclick="setScenarioGender(${i},'N')">Нейтр</button>
+                ${btnM}${btnF}${btnN}
             </div>
             <div style="margin-bottom:10px; padding:6px 10px; background:rgba(255,255,255,0.03); border-left:2px solid rgba(255,255,255,0.12); border-radius:0 4px 4px 0; font-size:11px; color:rgba(255,255,255,0.35); line-height:1.5;">
                 ⚠️ Для этого языка важен гендер — для М и Ж пишутся отдельные сценарии. При необходимости создай отдельный сценарий для другого пола.
@@ -1247,14 +1543,18 @@ function generateBrief() {
         }
     }
 
-    // Validate ref required
+    // Validate refs
     if (isUGC) {
-        const changeType = document.querySelector('input[name="changeType"]:checked');
-        const isAllNew = changeType && changeType.value === 'всё новое: разные персонажи в разных локациях';
-        const refRequired = repeatChar || (changeType && !isAllNew);
-        const refVal = document.getElementById('ref_link').value.trim();
-        if (refRequired && !refVal) {
-            showError('Укажите референс'); return;
+        const allNew = document.getElementById('c_allnew').checked;
+        const anyDetail = ['c_person','c_clothes','c_location'].some(id => document.getElementById(id).checked);
+        const refRequired = repeatChar || anyDetail;
+        const refs = getRefsData();
+        if (refRequired && refs.filter(r => r.link).length === 0) {
+            showError('Укажите хотя бы один референс'); return;
+        }
+        // Validate "что берём" filled for each ref with link
+        for (const r of refs) {
+            if (r.link && !r.what) { showError('Укажите "что берём" для каждого референса'); return; }
         }
     }
 
@@ -1280,9 +1580,15 @@ function generateBrief() {
         if (repeatChar) {
             changeNote = 'полностью повторяем персонажа';
         } else {
-            const changeType = document.querySelector('input[name="changeType"]:checked');
-            if (!changeType) { showError('Укажите что меняем у персонажа'); return; }
-            changeNote = changeType.value;
+            const allNew = document.getElementById('c_allnew').checked;
+            const changes = [];
+            if (!allNew) {
+                if (document.getElementById('c_person').checked)   changes.push('персонажа');
+                if (document.getElementById('c_clothes').checked)  changes.push('одежду персонажа');
+                if (document.getElementById('c_location').checked) changes.push('локацию / фон');
+            }
+            if (!allNew && changes.length === 0) { showError('Укажите что меняем (хотя бы один пункт)'); return; }
+            changeNote = allNew ? 'всё новое: разные персонажи в разных локациях' : 'меняем: ' + changes.join(', ');
         }
         const ugcClean = document.getElementById('ugcClean').checked;
         if (!ugcClean) {
@@ -1320,7 +1626,6 @@ function generateBrief() {
     }
 
     // ── Build output ────────────────────────────────────────────
-    const reference = document.getElementById('ref_link').value.trim();
     const buildPersonBlock = () => {
         if (repeatChar) {
             return 'Возраст: Как в рефе\nПол: Как в рефе\nВнешность: Как в рефе\nОписание сцены: Как в рефе';
@@ -1338,14 +1643,19 @@ function generateBrief() {
         lines.push(`Персонаж: ${changeNote}`);
     }
     if (context)   lines.push(`Комментарий: ${context}`);
-    if (reference) lines.push(`Референс: ${reference}`);
+    const refsData = getRefsData().filter(r => r.link);
+    refsData.forEach((r, idx) => {
+        const label = refsData.length > 1 ? `Референс ${idx+1}` : 'Референс';
+        lines.push(`${label}: ${r.link}`);
+        lines.push(`Что берём: ${r.what}`);
+    });
     if (selectedDeviation) {
         const devMap = {
             STRICT: 'STRICT — копируем максимально точно, ничего не меняем',
-            MEDIUM: 'MEDIUM — берём костяк, детали можно адаптировать',
+            MEDIUM: 'MEDIUM — сохраняем структуру и ключевые моменты, детали можно менять',
             FREE:   'FREE — главное передать идею, остальное на усмотрение',
         };
-        lines.push(`Степень изменения: ${devMap[selectedDeviation]}`);
+        lines.push(`Степень вариативности: ${devMap[selectedDeviation]}`);
     }
     const additionalReq = document.getElementById('additional_req').value.trim();
     if (additionalReq) { lines.push(''); lines.push(`Дополнительные требования:`); lines.push(additionalReq); }
@@ -1385,6 +1695,21 @@ function generateBrief() {
         while (pbLines.length && pbLines[pbLines.length-1].trim() === '') pbLines.pop();
         pbLines.forEach(l => lines.push(l));
         if (decor) { lines.push(''); lines.push(decor); }
+    }
+
+    // Validate gender split sum vs total versions
+    const totalVers = getTotalVersions();
+    // Gender split uses slider — always valid
+    // Validate scenario count divisible by versions
+    if (totalVers > 0 && totalVers % scenarioCount !== 0) {
+        const ok = confirm(`${totalVers} версий не делится на ${scenarioCount} сценари${scenarioCount===1?'й':'ев'}. Продолжить всё равно?`);
+        if (!ok) return;
+    }
+
+    // Validate deviation
+    const refsDataCheck = getRefsData().filter(r => r.link);
+    if (refsDataCheck.length > 0 && !selectedDeviation) {
+        showError('Укажите степень вариативности'); return;
     }
 
     // Validate gender for gendered languages
@@ -1446,6 +1771,19 @@ function generateBrief() {
 function clearForm() {
     hideError();
     scenarioData = {};
+    refCount = 0;
+    const refsC = document.getElementById('refsContainer');
+    if (refsC) { refsC.innerHTML = ''; addRef(); }
+    ['c_allnew','c_person','c_clothes','c_location'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.checked = false;
+    });
+    const cd = document.getElementById('changeDetails');
+    if (cd) cd.style.display = '';
+    const splitRow = document.getElementById('genderSplitRow');
+    if (splitRow) splitRow.style.display = 'none';
+    const sl = document.getElementById('split_slider'); if (sl) sl.value = 5;
+    const lm = document.getElementById('split_m_label'); if (lm) lm.textContent = '50%';
+    const lf = document.getElementById('split_f_label'); if (lf) lf.textContent = '50%';
     selectedDeviation = ''; updateDeviationUI();
     const addReq = document.getElementById('additional_req'); if (addReq) addReq.value = '';
     const devBlock = document.getElementById('deviationBlock'); if (devBlock) devBlock.style.display = 'none';
@@ -1457,6 +1795,9 @@ function clearForm() {
     document.querySelectorAll('input[name="changeType"]').forEach(r => r.checked = false);
     document.getElementById('repeatCharacter').checked = false;
     document.getElementById('ugcOptions').classList.remove('show');
+addRef(); // init first ref block
+updateDeviationUI();
+
     document.getElementById('changeOptions').classList.remove('show');
     const pf = document.getElementById('personFields');
     if (pf) pf.style.display = '';
@@ -1479,7 +1820,7 @@ function clearForm() {
     const decorField = document.getElementById('decorField');
     if (decorField) decorField.style.display = '';
     document.getElementById('resultContainer').classList.remove('show');
-    document.getElementById('ref_link').value = '';
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
     selectedLangCode = 'EN'; selectedLangName = 'English';
     scenarioCount = 1;
     document.querySelectorAll('.count-btn').forEach((b,i) => b.classList.toggle('active', i===0));
@@ -1513,6 +1854,153 @@ document.getElementById('ugcOptions').classList.remove('show');
 // ugcCleanRow visibility controlled by ugcOptions parent
 document.getElementById('footageFields').style.display = 'none';
 updateDecorVisibility();
+
+// ─── Auto-save & Restore ──────────────────────────────────────────────────────
+const STORAGE_KEY = 'tz_generator_draft';
+
+function collectFormState() {
+    const state = {};
+    // Simple fields
+    ['format','language-search','age','gender','appearance','scene','decor',
+     'context','additional_req','footage_theme','footage_content','footage_text_type',
+     'ugc_text_type','versions916','versions11'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) state[id] = el.value;
+    });
+    // Checkboxes
+    ['repeatCharacter','ugcClean','c_allnew','c_person','c_clothes','c_location'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) state[id] = el.checked;
+    });
+    // Slider
+    const sl = document.getElementById('split_slider');
+    if (sl) state.split_slider = sl.value;
+    // Refs
+    state.refs = getRefsData();
+    // Scenarios
+    saveScenarioData();
+    state.scenarioData = JSON.parse(JSON.stringify(scenarioData));
+    state.scenarioCount = scenarioCount;
+    state.selectedDeviation = selectedDeviation;
+    state.selectedLangCode = selectedLangCode;
+    state.selectedLangName = selectedLangName;
+    return state;
+}
+
+function isFormEmpty(state) {
+    const sig = ['format','age','gender','appearance','context','additional_req'];
+    return sig.every(k => !state[k]) && !state.scenarioData?.[1]?.ru;
+}
+
+let autoSaveTimer = null;
+function scheduleAutoSave() {
+    clearTimeout(autoSaveTimer);
+    autoSaveTimer = setTimeout(() => {
+        try {
+            const state = collectFormState();
+            if (!isFormEmpty(state)) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            }
+        } catch(e) {}
+    }, 1000);
+}
+
+function discardStorage() {
+    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+    const b = document.getElementById('restoreBanner');
+    if (b) b.classList.add('hidden');
+}
+
+function restoreFromStorage() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        // Restore format first (triggers onFormatChange)
+        if (state.format) {
+            const fEl = document.getElementById('format');
+            if (fEl) { fEl.value = state.format; onFormatChange(); }
+        }
+        // Restore language
+        if (state.selectedLangCode) {
+            selectedLangCode = state.selectedLangCode;
+            selectedLangName = state.selectedLangName || '';
+            const li = document.getElementById('language-search');
+            if (li) li.value = state['language-search'] || state.selectedLangName || '';
+        }
+        // Simple fields
+        ['age','gender','appearance','scene','decor','context','additional_req',
+         'footage_theme','footage_content','footage_text_type','ugc_text_type',
+         'versions916','versions11'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && state[id] !== undefined) el.value = state[id];
+        });
+        // Checkboxes
+        ['repeatCharacter','ugcClean','c_allnew','c_person','c_clothes','c_location'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el && state[id] !== undefined) el.checked = state[id];
+        });
+        // Trigger dependent UI
+        if (document.getElementById('gender').value) onGenderChange();
+        if (state['c_allnew']) onAllNewChange();
+        onRepeatChange();
+        // Slider
+        if (state.split_slider !== undefined) {
+            const sl = document.getElementById('split_slider');
+            if (sl) { sl.value = state.split_slider; onSplitSlider(); }
+        }
+        // Refs
+        const refsC = document.getElementById('refsContainer');
+        if (refsC && state.refs && state.refs.length > 0) {
+            refsC.innerHTML = ''; refCount = 0;
+            state.refs.forEach(r => addRef(r.link, r.what));
+        }
+        // Deviation
+        if (state.selectedDeviation) { selectedDeviation = state.selectedDeviation; updateDeviationUI(); }
+        // Scenarios
+        if (state.scenarioData) {
+            scenarioData = state.scenarioData;
+            scenarioCount = state.scenarioCount || 1;
+            document.querySelectorAll('.count-btn').forEach((b, i) => b.classList.toggle('active', i === scenarioCount - 1));
+            renderScenarios();
+            restoreScenarioData();
+        }
+        // onRefInput to show deviation block if ref filled
+        onRefInput();
+        discardStorage();
+    } catch(e) { console.error('Restore error:', e); }
+}
+
+function checkStorageOnLoad() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const state = JSON.parse(raw);
+        if (!isFormEmpty(state)) {
+            const b = document.getElementById('restoreBanner');
+            if (b) b.classList.remove('hidden');
+        }
+    } catch(e) {}
+}
+
+// Warn before leaving with unsaved data
+window.addEventListener('beforeunload', (e) => {
+    try {
+        const state = collectFormState();
+        if (!isFormEmpty(state)) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    } catch(err) {}
+});
+
+// Auto-save on any input change
+document.addEventListener('input', scheduleAutoSave);
+document.addEventListener('change', scheduleAutoSave);
+
+// Check for saved draft on load
+window.addEventListener('load', checkStorageOnLoad);
+
 </script>
 </body>
 </html>
