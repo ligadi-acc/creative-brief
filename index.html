@@ -1792,12 +1792,12 @@ function renderScenarios() {
             ${plashkiHtml}
             <div class="form-group" style="margin-bottom:8px">
                 <label>${ruLabel}: (русский)</label>
-                <textarea id="scenario_ru_${i}" placeholder="Текст сценария на русском..."></textarea>
+                <textarea id="scenario_ru_${i}" rows="3" placeholder="Текст сценария на русском..."></textarea>
             </div>
             <div class="form-group" style="margin-bottom:0">
                 <label>${limLabel}</label>
                 <div class="textarea-wrap">
-                    <textarea id="scenario_tr_${i}"
+                    <textarea id="scenario_tr_${i}" rows="4"
                         placeholder="Текст на ${selectedLangName || 'выбранном языке'}..."
                         oninput="checkCharCount(this, 'counter_${i}')"
                         ${isRu ? 'disabled style="opacity:.4"' : ''}
