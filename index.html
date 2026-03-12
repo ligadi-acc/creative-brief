@@ -478,6 +478,19 @@
     <!-- ═══ TAB: Генератор ТЗ ═══ -->
     <div id="generator" class="tab-content active">
 
+        <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
+            <button onclick="fillExample()" style="
+                padding: 6px 14px; font-size: 12px; border-radius: 6px;
+                border: 1px solid rgba(255,200,50,0.3);
+                background: rgba(255,200,50,0.07); color: rgba(255,200,50,0.8);
+                cursor: pointer; font-family: inherit; letter-spacing: 0.3px;
+                transition: all .15s;
+            " onmouseover="this.style.background='rgba(255,200,50,0.15)';this.style.color='rgba(255,200,50,1)'"
+               onmouseout="this.style.background='rgba(255,200,50,0.07)';this.style.color='rgba(255,200,50,0.8)'">
+                ✨ Пример заполнения
+            </button>
+        </div>
+
         <div class="form-group">
             <label>Язык <span class="required">*</span></label>
             <div class="language-selector">
@@ -1072,6 +1085,268 @@ function setScenarioGender(idx, val) {
         const btn = document.getElementById(`${labels[v]}_${idx}`);
         if (btn) btn.classList.toggle('active', scenarioData[idx].gender === v);
     });
+}
+
+
+
+function fillExample() {
+    clearForm();
+
+    const deviations = ['STRICT', 'MEDIUM', 'FREE'];
+    const ages = ['18-24, 35-44', '25-34, 55+', '18-24, 25-34, 45-54'];
+
+    const variants = [
+        {
+            lang: 'EN', fmt: 'UGC', v916: 6, v11: 4,
+            refLink: 'https://drive.google.com/file/d/brioche-hero-ref',
+            refWhat: 'Берём вайб, свет и ракурс — персонажа меняем',
+            comment: 'Крео зашло в Q3 как по маслу. Хотим новые лица, но та же магия.',
+            appearance: 'Привлекательные европейцы, располагающая внешность — не модели, но мы не против',
+            scene: 'Светлая кухня, утреннее освещение, герой смотрит в камеру',
+            addReq: 'Без татуировок на руках. Кошек не брать — предыдущий кот съел реквизит и потребовал гонорар.',
+            scenarios: [
+                {
+                    ru: 'Я перепробовал всё. Диеты, спорт, медитации, холодный душ в 5 утра. Ничего. А потом нашёл вот это — и жизнь изменилась. Ну, и жена наконец перестала жаловаться.',
+                    tr: 'I tried everything. Diets. Gym. Cold showers at 5am. Nothing worked. Then I found this — and life changed. My wife finally stopped complaining too.',
+                    plashka: 'Wife approved.'
+                },
+                {
+                    ru: 'Знаете, что самое сложное в утреннем ритуале? Встать. Всё остальное — дело техники. Особенно с этим.',
+                    tr: 'The hardest part of a morning routine? Getting up. Everything else is easy. Especially with this.',
+                    plashka: 'Getting up is still on you.'
+                }
+            ]
+        },
+        {
+            lang: 'FR', fmt: 'Mix', v916: 8, v11: 0,
+            refLink: 'https://drive.google.com/file/d/golden-ref',
+            refWhat: 'Цветокоррекция и темп монтажа — персонаж новый',
+            comment: 'Хотим ощущение совета от подруги, а не рекламы шампуня из 2003-го.',
+            appearance: 'Gen Z, разные, живые — чуть странные это плюс, а не минус',
+            scene: 'Городская улица, золотой час, никаких застывших поз',
+            addReq: 'Лоу-фай обязателен. Если выглядит как реклама — это провал. Аудитория учует за секунду.',
+            scenarios: [
+                {
+                    ru: 'Окей, я такого обычно не рассказываю. Но вы заслуживаете знать. Это причина, по которой я подозрительно счастлива уже три недели. Совпадение? Не думаю.',
+                    tr: 'Ok, je raconte pas ça d\'habitude. Mais vous méritez de savoir. C\'est la raison pour laquelle je suis bizarrement heureuse depuis trois semaines. Coïncidence? Je crois pas.',
+                    plashka: 'Trois semaines de bonheur.'
+                },
+                {
+                    ru: 'Все спрашивают в чём секрет. Хорошие гены? Нет. Дорогой крем? Нет. Просто вот это раз в день и нормальный сон. Хотя со сном я вам не помогу.',
+                    tr: 'Tout le monde me demande mon secret. Bons gènes? Non. Crème hors de prix? Non. Juste ça une fois par jour et dormir correctement. Pour le sommeil je peux pas vous aider.',
+                    plashka: 'Secret révélé.'
+                }
+            ]
+        },
+        {
+            lang: 'EN', fmt: 'Cutout', v916: 10, v11: 0,
+            refLink: 'https://drive.google.com/file/d/cutout-4roas-ref',
+            refWhat: 'Стиль катаута, движение фона, оверлеи — только персонаж новый',
+            comment: 'Прошлый батч — 4.2x ROAS. Повторяем формулу, не трогаем то что работает.',
+            appearance: 'Бизнес-кэжуал, слегка уставший но держится — тип "всё успеваю" 35-44',
+            scene: 'Нейтральный фон, чистый свет, уверенная поза, прямой взгляд в камеру',
+            addReq: 'Минимум 3 секунды прямого взгляда в камеру на хуке. Профиль не берём — нам нужен контакт а не портрет.',
+            scenarios: [
+                {
+                    ru: 'Честно? Я был скептиком. Причём профессиональным. Но одна неделя — и я здесь, снимаю про это видео. Либо лучшая покупка года, либо я сломался. Скорее первое.',
+                    tr: 'Honestly? I was a professional skeptic. But one week later here I am making a video about it. Either best purchase of the year or I\'m broken. Probably the first.',
+                    plashka: 'Former skeptic. Current fan.'
+                },
+                {
+                    ru: 'Я не делаю рекламу. Никогда не делаю. Но когда что-то реально работает — приходится нарушать правила. Вы поймёте когда попробуете.',
+                    tr: 'I don\'t do ads. Never do. But when something actually works — rules get broken. You\'ll understand once you try it.',
+                    plashka: 'Rules broken. Worth it.'
+                }
+            ]
+        },
+        {
+            lang: 'FR', fmt: 'UGC', v916: 5, v11: 5,
+            refLink: 'https://drive.google.com/file/d/office-ref',
+            refWhat: 'Структура хука и темп — персонаж и локация новые',
+            comment: 'Хук в первые 2 секунды — железное правило. Дальше можно дышать.',
+            appearance: 'Узнаваемые 40-летние — выглядят как ваш сосед не как глянцевый журнал',
+            scene: 'Домашний офис, боковой свет из окна, стол чуть заваленный — живо и реально',
+            addReq: 'Слова "революция" и "изменит вашу жизнь" запрещены. Аудитория умная и слышала это 800 раз.',
+            scenarios: [
+                {
+                    ru: '14 лет я оптимизировал всё вокруг. Встречи, почту, сон, завтрак. И только недавно понял что упускал самое очевидное. Немного обидно. Но лучше поздно.',
+                    tr: 'Pendant 14 ans j\'ai tout optimisé. Réunions, emails, sommeil, petit-déj. Et j\'ai réalisé que je passais à côté de l\'évidence. Un peu vexant. Mais mieux vaut tard.',
+                    plashka: '14 ans de perdu. Mais bon.'
+                },
+                {
+                    ru: 'Никто не предупреждает сколько сил отнимает взрослая жизнь. Ипотека, дети, зум в пижаме. Хотя последнее — не жалуюсь.',
+                    tr: 'Personne te prévient à quel point être adulte épuise. Crédit, enfants, réunions Zoom en pyjama. Bon, le dernier je me plains pas.',
+                    plashka: 'Adulting: mode survie.'
+                }
+            ]
+        },
+        {
+            lang: 'EN', fmt: 'SplitOffer', v916: 6, v11: 6,
+            refLink: 'https://drive.google.com/file/d/split-winner-ref',
+            refWhat: 'Тайминг сплита и CTA — персонаж и обстановка новые',
+            comment: 'До/после лучше всего зашло в EU. Формат сохраняем лица меняем.',
+            appearance: 'Обычные люди 25-35, немного уставшие от жизни — максимально узнаваемо',
+            scene: 'Левая: хаос, беспорядок, 47 вкладок. Правая: тот же человек но всё окей.',
+            addReq: 'Правая сторона — достижимо не мечта миллионера. Просто лучше. Роскошь нам не нужна.',
+            scenarios: [
+                {
+                    ru: 'Раньше: 47 вкладок, холодный кофе и лёгкая паника. Теперь: одна вкладка, горячий кофе и тихая уверенность. Я не стал другим человеком. Просто добавил одну вещь.',
+                    tr: 'Before: 47 tabs, cold coffee, mild panic. Now: one tab, hot coffee, quiet confidence. I didn\'t become a different person. I just added one thing.',
+                    plashka: 'One thing. Big difference.'
+                },
+                {
+                    ru: 'Я не изменил всё. Просто убрал одну проблему. А за ней сами собой ушли ещё три. Такое бывает. Редко но бывает.',
+                    tr: 'I didn\'t change everything. I just removed one problem. And three others disappeared on their own. That happens. Rarely but it happens.',
+                    plashka: 'Remove one. Lose three.'
+                }
+            ]
+        },
+        {
+            lang: 'EN', fmt: 'UGC', v916: 6, v11: 4,
+            refLink: 'https://drive.google.com/file/d/forbidden-ref',
+            refWhat: 'Берём нарастающую интонацию и паузы — персонаж новый',
+            comment: 'Формат запретного знания. Говорит тихо, почти шёпотом. Никакого актёрства.',
+            appearance: 'Обычный человек 30-40, усталый взгляд — как будто видел слишком многое',
+            scene: 'Тёмная комната, один источник света сбоку, минимум движений',
+            addReq: 'Никакого позитива и улыбок. Интонация — человек который знает то чего лучше бы не знал.',
+            scenarios: [
+                {
+                    ru: 'Ребята, не стоит вскрывать эту тему. Вы молодые, шутливые, вам всё легко. Это не то. Это не Чикатило и даже не архивы спецслужб. Сюда лучше не лезть. Серьёзно, любой из вас будет жалеть. Лучше закройте и забудьте что тут писалось. Я вполне понимаю что данным сообщением вызову дополнительный интерес — но хочу сразу предостеречь пытливых: стоп. Остальные просто не найдут.',
+                    tr: 'Guys, don\'t go down this rabbit hole. You\'re young, carefree, think everything\'s a joke. It\'s not. This isn\'t some true crime story or leaked files. Don\'t. Anyone who looks will regret it. Close this and forget you ever saw it. I know this message will only make you more curious. That\'s exactly why I\'m warning you: stop. The rest of you won\'t find it anyway.',
+                    plashka: 'You were warned.'
+                },
+                {
+                    ru: 'Я не буду объяснять как именно это работает. Я потратил три года чтобы это найти. И ещё год чтобы перестать об этом думать. Если вы читаете это — значит уже поздно и он решил что вам можно знать. Добро пожаловать или хуже.',
+                    tr: 'I won\'t explain how it works. It took me three years to find this. And another year to stop thinking about it. If you\'re seeing this — the algorithm already decided you\'re ready. Welcome.',
+                    plashka: 'The algorithm chose you.'
+                }
+            ]
+        },
+        {
+            lang: 'FR', fmt: 'UGC', v916: 5, v11: 5,
+            refLink: 'https://drive.google.com/file/d/arbitrage-ref',
+            refWhat: 'Интонация нарастающего предупреждения — персонаж и фон новые',
+            comment: 'Арбитражная специфика. Метод который не принято обсуждать вслух. Серьёзно, без подмигиваний.',
+            appearance: 'Мужчина 35-45, вид человека который работал в ночь и что-то обнаружил',
+            scene: 'Ноутбук в темноте, экран светит в лицо, тихо как будто боится что услышат',
+            addReq: 'Темп медленный. Паузы между фразами обязательны. Не продаём — предостерегаем.',
+            scenarios: [
+                {
+                    ru: 'Я не буду называть источник. Некоторые вещи не нужно масштабировать. Этот метод работает именно потому что про него никто не говорит. Как только заговорят — перестанет. Так что это последний раз когда я об этом упоминаю.',
+                    tr: 'Je vais pas nommer la source. Certaines choses ne doivent pas passer à l\'échelle. Cette méthode fonctionne précisément parce que personne n\'en parle. Le jour où tout le monde en parle — elle arrête. Donc c\'est la dernière fois que j\'en parle.',
+                    plashka: 'La dernière fois que j\'en parle.'
+                },
+                {
+                    ru: 'Мы не знаем что это такое. Если бы мы знали что это такое — мы не знаем что это такое. Запустил в пять десять пятого утра. Конверсия пошла. В шесть пятнадцать — остановилась. В минут десять четвёртого — снова. Страшно. Очень страшно.',
+                    tr: 'On sait pas ce que c\'est. Si on savait ce que c\'est — on sait pas ce que c\'est. Lancé à cinq heures dix du matin. Conversion. À six heures quinze — stop. À dix minutes du quatrième — encore. C\'est effrayant. Très effrayant.',
+                    plashka: 'On sait pas. Ça marche.'
+                }
+            ]
+        },
+        {
+            lang: 'EN', fmt: 'UGC', v916: 8, v11: 4,
+            refLink: 'https://drive.google.com/file/d/tinkoff-style-ref',
+            refWhat: 'Только энергия и темп — персонаж новый',
+            comment: 'Стиль уверенного предпринимателя. Рубленые фразы, никакого нытья, никаких оправданий.',
+            appearance: 'Мужчина 35-50, уверенный взгляд, нет пиджака — всё равно выглядит как хозяин',
+            scene: 'Офис или переговорная, стоит а не сидит, смотрит в камеру прямо',
+            addReq: 'Темп быстрый. Паузы короткие. Никаких "наверное" и "может быть". Только утверждения.',
+            scenarios: [
+                {
+                    ru: 'Все говорили — не получится. Рынок занят. Маржи нет. Я послушал. Подумал. И сделал. Было сложно? Да, было сложно. Очень сложно. Но я это сделал. Первый месяц — минус. Второй — ноль. Третий — я не буду называть цифру. Скажу одно: было сложно. Но я это сделал.',
+                    tr: 'Everyone said it wouldn\'t work. Market\'s crowded. No margin. I listened. Thought about it. And did it. Was it hard? Yes, it was hard. Very hard. But I did it. Month one — minus. Month two — zero. Month three — I won\'t name the number. I\'ll say one thing: it was hard. But I did it.',
+                    plashka: 'Hard. Done. Next.'
+                },
+                {
+                    ru: 'Хватит читать кейсы чужих. Хватит покупать курсы. Хватит ждать. Я не ждал. Я взял и запустил. Упал — встал. Упал снова — встал снова. Конкуренты ждут пока рынок созреет. Рынок не созреет. Рынок — это ты. Либо ты давишь — либо тебя давят. Я давлю. Всегда давил. Было сложно. Но я это сделал.',
+                    tr: 'Stop reading other people\'s case studies. Stop buying courses. Stop waiting. I didn\'t wait. I launched. Fell — got up. Fell again — got up again. Competitors wait for the market to mature. The market won\'t mature. The market is you. Either you push or you get pushed. I push. Always have. It was hard. But I did it.',
+                    plashka: 'Either you push or get pushed.'
+                }
+            ]
+        }
+    ];
+
+    // 50% meme (indices 5,6,7), 50% non-meme (indices 0-4)
+    const memeIdxs = [5, 6, 7];
+    const nonMemeIdxs = [0, 1, 2, 3, 4];
+    const pool = Math.random() < 0.5 ? memeIdxs : nonMemeIdxs;
+    const v = variants[pool[Math.floor(Math.random() * pool.length)]];
+    const deviation = deviations[Math.floor(Math.random() * deviations.length)];
+    const age = ages[Math.floor(Math.random() * ages.length)];
+
+    setTimeout(() => {
+        const langInput = document.getElementById('language');
+        if (langInput) { langInput.value = v.lang; selectedLangCode = v.lang; }
+        const dd = document.getElementById('langDropdown');
+        if (dd) dd.style.display = 'none';
+
+        const fmtSelect = document.getElementById('format');
+        if (fmtSelect) { fmtSelect.value = v.fmt; onFormatChange(); }
+
+        setTimeout(() => {
+            setVersions('916', v.v916);
+            setVersions('11', v.v11);
+
+            const rep = document.getElementById('repeatCharacter');
+            if (rep && rep.checked) rep.click();
+            const allNew = document.getElementById('c_allnew');
+            if (allNew) allNew.checked = false;
+            const cd = document.getElementById('changeDetails');
+            if (cd) cd.style.display = '';
+            ['c_person','c_clothes','c_location'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.checked = (id === 'c_person');
+            });
+            updateRefRequired();
+
+            const txtType = document.getElementById('ugc_text_type');
+            if (txtType) { txtType.value = 'subtitles_caption'; onUgcTextType(); }
+
+            const refsC = document.getElementById('refsContainer');
+            if (refsC) { refsC.innerHTML = ''; refCount = 0; }
+            addRef(v.refLink, v.refWhat);
+            setTimeout(() => { onRefInput(); setDeviation(deviation); }, 50);
+
+            const ctx = document.getElementById('context');
+            if (ctx) ctx.value = v.comment;
+
+            const ageEl = document.getElementById('age');
+            if (ageEl) ageEl.value = age;
+            const genderEl = document.getElementById('gender');
+            if (genderEl) { genderEl.value = 'мужчины и женщины'; onGenderChange(); }
+            const sl = document.getElementById('split_slider');
+            if (sl) { sl.value = 5; onSplitSlider(); }
+            const appEl = document.getElementById('appearance');
+            if (appEl) appEl.value = v.appearance;
+            const sceneEl = document.getElementById('scene');
+            if (sceneEl) sceneEl.value = v.scene;
+
+            const addReq = document.getElementById('additional_req');
+            if (addReq) addReq.value = v.addReq;
+
+            const clean = document.getElementById('ugcClean');
+            if (clean && clean.checked) clean.click();
+
+            setScenarioCount(2, document.querySelectorAll('.count-btn')[1]);
+
+            setTimeout(() => {
+                v.scenarios.forEach((sc, i) => {
+                    const ruEl = document.getElementById('scenario_ru_' + i);
+                    if (ruEl) ruEl.value = sc.ru;
+                    const trEl = document.getElementById('scenario_tr_' + i);
+                    if (trEl) trEl.value = sc.tr;
+                    const addBtn = document.querySelector('[onclick="addPlashka(' + i + ')"]');
+                    if (addBtn && sc.plashka) {
+                        addBtn.click();
+                        setTimeout(() => {
+                            const inputs = document.querySelectorAll('#plashki_' + i + ' input');
+                            if (inputs.length > 0) inputs[inputs.length - 1].value = sc.plashka;
+                        }, 80);
+                    }
+                });
+            }, 200);
+        }, 100);
+    }, 50);
 }
 
 
