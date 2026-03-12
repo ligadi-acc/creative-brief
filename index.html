@@ -629,7 +629,16 @@
         <div class="form-row">
             <div class="form-group">
                 <label class="person-field-label">Возраст <span class="required">*</span></label>
-                <input type="text" id="age" placeholder="25-35">
+                <div class="versions-wrap">
+                    <input type="text" id="age" placeholder="Например: 25-35, 45-50, 60+">
+                    <div class="preset-btns">
+                        <button class="preset-btn" onclick="setAge('18-24')">18-24</button>
+                        <button class="preset-btn" onclick="setAge('25-34')">25-34</button>
+                        <button class="preset-btn" onclick="setAge('35-44')">35-44</button>
+                        <button class="preset-btn" onclick="setAge('45-54')">45-54</button>
+                        <button class="preset-btn" onclick="setAge('55+')">55+</button>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label class="person-field-label">Пол <span class="required">*</span></label>
@@ -1066,6 +1075,15 @@ function setScenarioGender(idx, val) {
 }
 
 
+function setAge(val) {
+    const el = document.getElementById('age');
+    if (!el) return;
+    el.value = val;
+    document.querySelectorAll('.age-preset .preset-btn').forEach(b => {
+        b.classList.toggle('active', b.textContent === val);
+    });
+}
+
 function setVersions(field, val) {
     const el = document.getElementById('versions' + field);
     if (!el) return;
@@ -1211,8 +1229,13 @@ function onAllNewChange() {
     document.querySelectorAll('[id^="ref_what_"]').forEach(el => {
         const lbl = el.previousElementSibling;
         if (lbl) {
-            const req = lbl.querySelector('.required');
-            if (req) req.style.display = allNew ? 'none' : 'inline';
+            let req = lbl.querySelector('.required');
+            if (allNew && req) { req.remove(); }
+            else if (!allNew && !req) {
+                const span = document.createElement('span');
+                span.className = 'required'; span.textContent = ' *';
+                lbl.appendChild(span);
+            }
         }
         el.required = !allNew;
     });
@@ -1225,6 +1248,8 @@ function addRef(linkVal, whatVal) {
     refCount++;
     const n = refCount;
     const container = document.getElementById('refsContainer');
+    if (container) container.style.display = '';
+    const allNew = document.getElementById('c_allnew') && document.getElementById('c_allnew').checked;
     const block = document.createElement('div');
     block.className = 'ref-block';
     block.id = `ref_block_${n}`;
@@ -1237,7 +1262,7 @@ function addRef(linkVal, whatVal) {
             <input type="text" id="ref_link_${n}" placeholder="Ссылка на референс..." oninput="onRefInput()" value="${(linkVal||'').replace(/"/g,'&quot;')}">
         </div>
         <div class="form-group" style="margin-bottom:0">
-            <label style="font-size:11px; color:rgba(255,255,255,0.4);">Что берём <span class="required">*</span></label>
+            <label style="font-size:11px; color:rgba(255,255,255,0.4);">Что берём${allNew ? '' : ' <span class=\"required\">*</span>'}</label>
             <input type="text" id="ref_what_${n}" placeholder="Всё / только персонажа / фон и вайб / ракурс и свет / идею..." value="${(whatVal||'').replace(/"/g,'&quot;')}">
         </div>
     `;
@@ -1266,9 +1291,11 @@ function getRefsData() {
 function onRefInput() {
     const refs = getRefsData();
     const hasAnyLink = refs.some(r => r.link);
+    const repeatChar = document.getElementById('repeatCharacter') && document.getElementById('repeatCharacter').checked;
     const block = document.getElementById('deviationBlock');
-    if (block) block.style.display = hasAnyLink ? 'block' : 'none';
-    if (!hasAnyLink) { selectedDeviation = ''; updateDeviationUI(); }
+    const show = hasAnyLink && !repeatChar;
+    if (block) block.style.display = show ? 'block' : 'none';
+    if (!show) { selectedDeviation = 'MEDIUM'; updateDeviationUI(); }
 }
 
 function setDeviation(val) {
@@ -1322,6 +1349,15 @@ function onRepeatChange() {
     }
     updateDecorVisibility();
     updateRefRequired();
+    // Sync deviation block
+    const checked2 = document.getElementById('repeatCharacter').checked;
+    const refs = typeof getRefsData === 'function' ? getRefsData().filter(r => r.link) : [];
+    const devBlock = document.getElementById('deviationBlock');
+    if (devBlock) {
+        const show = refs.length > 0 && !checked2;
+        devBlock.style.display = show ? 'block' : 'none';
+        if (!show) { selectedDeviation = 'MEDIUM'; updateDeviationUI(); }
+    }
 }
 
 // ─── Scenario rendering ───────────────────────────────────────────────────────
@@ -1574,12 +1610,14 @@ function generateBrief() {
     const isFootage = ['Footage','AEMockup','Static'].includes(format);
     const repeatChar = isUGC && document.getElementById('repeatCharacter').checked;
 
-    // Validate UGC: checkbox is required
+    // Validate UGC: must have repeatChar OR at least one change option
     if (isUGC && !repeatChar) {
-        const changeType = document.querySelector('input[name="changeType"]:checked');
-        if (changeType === null && !repeatChar) {
-            // neither checkbox nor radio selected
-            showError('Укажите вариант персонажа (галочка или что меняем)'); return;
+        const allNew = document.getElementById('c_allnew') && document.getElementById('c_allnew').checked;
+        const anyCheck = ['c_person','c_clothes','c_location'].some(id => {
+            const el = document.getElementById(id); return el && el.checked;
+        });
+        if (!allNew && !anyCheck) {
+            showError('Укажите "Что меняем" — выберите хотя бы один пункт в блоке выше'); return;
         }
     }
 
